@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Money Transfer Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #003580, #0066cc);
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .login, .username {
+      background: #f4f4f9;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 420px;
+      display: none;
+    }
+    .calculator {
+      background: #f4f4f9;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 500px;
+      border: 1px solid #d6d9dc;
+      display: none;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #003580;
+    }
+    select, input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+      background-color: #ffffff;
+      color: #333;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #febb02;
+      color: #003580;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-bottom: 12px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #e0a800;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      color: #003580;
+      background-color: #e6f0ff;
+      border-radius: 8px;
+      border: 1px solid #b3d4fc;
+    }
+    .settings {
+      margin-top: 20px;
+      background: #ffffff;
+      padding: 15px;
+      border-radius: 8px;
+      display: none;
+      border: 1px solid #b3d4fc;
+      font-size: 14px;
+    }
+    label {
+      color: #003580;
+      font-weight: bold;
+      font-size: 14px;
+      display: block;
+      margin-bottom: 5px;
+    }
+    .error {
+      color: #d9534f;
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    .success {
+      color: #5cb85c;
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .header h2 {
+      margin: 0;
+    }
+    .logout-btn {
+      background: #d9534f;
+      color: white;
+      width: auto;
+      padding: 8px 15px;
+      font-size: 14px;
+    }
+    .logout-btn:hover {
+      background: #c9302c;
+    }
+    .history {
+      margin-top: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
+      background: white;
+    }
+    .history-item {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+    .history-item:last-child {
+      border-bottom: none;
+    }
+    .clear-history {
+      background: #f0ad4e;
+      margin-top: 10px;
+    }
+    .clear-history:hover {
+      background: #ec971f;
+    }
+    .currency-input {
+      position: relative;
+    }
+    .currency-symbol {
+      position: absolute;
+      left: 10px;
+      top: 38px;
+      font-weight: bold;
+      color: #555;
+    }
+    input.with-symbol {
+      padding-left: 30px;
+    }
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      .calculator, .login, .username {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login" id="loginPanel">
+    <h2>Login</h2>
+    <label for="role">Select Role</label>
+    <select id="role">
+      <option value="admin">Admin</option>
+      <option value="customer">Customer</option>
+    </select>
+    <label for="password">Password</label>
+    <input type="password" id="password" placeholder="Enter password">
+    <button onclick="login()">Login</button>
+    <div id="loginError" class="error"></div>
+  </div>
+
+  <div class="username" id="usernamePanel">
+    <h2>Enter Username</h2>
+    <input type="text" id="usernameInput" placeholder="Enter username">
+    <button onclick="submitUsername()">Submit</button>
+    <div id="usernameError" class="error"></div>
+  </div>
+
+  <div class="calculator" id="calculatorPanel">
+    <div class="header">
+      <h2>Money Transfer Calculator</h2>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+    
+    <div class="settings" id="settingsPanel">
+      <h3>Exchange Rates</h3>
+      <label>1 USD = <input type="number" step="0.01" id="usdToEgp"> EGP</label>
+      <label>1 USD = <input type="number" step="0.01" id="usdToBif"> BIF</label>
+      <label>1 USD = <input type="number" step="0.01" id="usdToTzs"> TZS</label>
+      <label>1 USD = <input type="number" step="0.01" id="usdToRwf"> RWF</label>
+      <label>1 USD = <input type="number" step="0.01" id="usdToUgx"> UGX</label>
+      <label>1 USD = <input type="number" step="0.01" id="usdToCdf"> CDF</label>
+      <label>1 USD = <input type="number" step="0.01" id="usdToKes"> KES</label>
+      <label>1 USD = <input type="number" step="0.01" id="usdToCad"> CAD</label>
+      
+      <h3>Transfer Fees</h3>
+      <label>Burundi Fee per 100 USD = <input type="number" step="0.01" id="feeBurundi"> EGP</label>
+      <label>Tanzania Fee per 100 USD = <input type="number" step="0.01" id="feeTanzania"> EGP</label>
+      
+      <button onclick="saveSettings()">Save Settings</button>
+      <button onclick="resetSettings()" style="background-color: #d9534f; color: white;">Reset to Default</button>
+      <div id="settingsMessage" class="success"></div>
+    </div>
+
+    <div class="currency-input">
+      <span class="currency-symbol">EGP</span>
+      <label for="amount">Amount</label>
+      <input type="number" step="0.01" id="amount" placeholder="Amount" class="with-symbol">
+    </div>
+
+    <label for="country">Select Country</label>
+    <select id="country">
+      <option value="burundi">Burundi (BIF)</option>
+      <option value="tanzania">Tanzania (TZS)</option>
+      <option value="rwanda">Rwanda (RWF)</option>
+      <option value="ouganda">Uganda (UGX)</option>
+      <option value="drc">DR Congo (CDF)</option>
+      <option value="kenya">Kenya (KES)</option>
+      <option value="canada">Canada (CAD)</option>
+      <option value="usa">United States (USD)</option>
+    </select>
+
+    <button onclick="toggleSettings()">⚙️ Settings</button>
+    <button onclick="calculateTransfer()">Calculate Transfer</button>
+    <div class="result" id="result"></div>
+    
+    <div class="history" id="historyPanel">
+      <h3>Transaction History</h3>
+      <div id="historyList"></div>
+      <button class="clear-history" onclick="clearHistory()">Clear History</button>
+    </div>
+  </div>
+
+  <script>
+    // Default settings
+    const defaultSettings = {
+      usdToEgp: 30.90,
+      usdToBif: 2850,
+      usdToTzs: 2500,
+      usdToRwf: 1300,
+      usdToUgx: 3700,
+      usdToCdf: 2500,
+      usdToKes: 150,
+      usdToCad: 1.35,
+      feeBurundi: 5,
+      feeTanzania: 4.5
+    };
+
+    // Currency symbols map
+    const currencySymbols = {
+      burundi: 'BIF',
+      tanzania: 'TZS',
+      rwanda: 'RWF',
+      ouganda: 'UGX',
+      drc: 'CDF',
+      kenya: 'KES',
+      canada: 'CAD',
+      usa: 'USD'
+    };
+
+    let currentUser = '';
+    let transactionHistory = [];
+
+    function login() {
+      const role = document.getElementById("role").value;
+      const password = document.getElementById("password").value;
+      const loginError = document.getElementById("loginError");
+      
+      if ((role === "admin" && password === "Kabura@2025") || 
+          (role === "customer" && password === "KMC@2025")) {
+        document.getElementById("loginPanel").style.display = "none";
+        document.getElementById("usernamePanel").style.display = "block";
+        loginError.textContent = "";
+      } else {
+        loginError.textContent = "Invalid password. Please try again.";
+      }
+    }
+
+    function submitUsername() {
+      const username = document.getElementById("usernameInput").value.trim();
+      const usernameError = document.getElementById("usernameError");
+      
+      if (username === "") {
+        usernameError.textContent = "Please enter a username.";
+        return;
+      }
+      
+      currentUser = username;
+      document.getElementById("usernamePanel").style.display = "none";
+      document.getElementById("calculatorPanel").style.display = "block";
+      
+      // Load user-specific history if exists
+      const savedHistory = localStorage.getItem(`transferHistory_${currentUser}`);
+      if (savedHistory) {
+        transactionHistory = JSON.parse(savedHistory);
+        updateHistoryDisplay();
+      }
+    }
+
+    function logout() {
+      // Save history before logging out
+      localStorage.setItem(`transferHistory_${currentUser}`, JSON.stringify(transactionHistory));
+      
+      currentUser = '';
+      document.getElementById("calculatorPanel").style.display = "none";
+      document.getElementById("loginPanel").style.display = "block";
+      document.getElementById("password").value = '';
+      document.getElementById("usernameInput").value = '';
+    }
+
+    function toggleSettings() {
+      const panel = document.getElementById("settingsPanel");
+      panel.style.display = panel.style.display === "none" ? "block" : "none";
+      document.getElementById("settingsMessage").textContent = "";
+    }
+
+    function saveSettings() {
+      const settings = {
+        usdToEgp: parseFloat(document.getElementById("usdToEgp").value),
+        usdToBif: parseFloat(document.getElementById("usdToBif").value),
+        usdToTzs: parseFloat(document.getElementById("usdToTzs").value),
+        usdToRwf: parseFloat(document.getElementById("usdToRwf").value),
+        usdToUgx: parseFloat(document.getElementById("usdToUgx").value),
+        usdToCdf: parseFloat(document.getElementById("usdToCdf").value),
+        usdToKes: parseFloat(document.getElementById("usdToKes").value),
+        usdToCad: parseFloat(document.getElementById("usdToCad").value),
+        feeBurundi: parseFloat(document.getElementById("feeBurundi").value),
+        feeTanzania: parseFloat(document.getElementById("feeTanzania").value)
+      };
+      
+      // Validate settings
+      for (const key in settings) {
+        if (isNaN(settings[key]) || settings[key] <= 0) {
+          document.getElementById("settingsMessage").textContent = "Please enter valid positive numbers for all fields.";
+          document.getElementById("settingsMessage").className = "error";
+          return;
+        }
+      }
+      
+      localStorage.setItem("transferSettings", JSON.stringify(settings));
+      document.getElementById("settingsMessage").textContent = "Settings saved successfully!";
+      document.getElementById("settingsMessage").className = "success";
+      
+      // Hide settings after 2 seconds
+      setTimeout(() => {
+        document.getElementById("settingsPanel").style.display = "none";
+      }, 2000);
+    }
+
+    function resetSettings() {
+      if (confirm("Are you sure you want to reset to default settings?")) {
+        localStorage.removeItem("transferSettings");
+        loadSettings();
+        document.getElementById("settingsMessage").textContent = "Settings reset to defaults!";
+        document.getElementById("settingsMessage").className = "success";
+      }
+    }
+
+    function loadSettings() {
+      const saved = JSON.parse(localStorage.getItem("transferSettings")) || defaultSettings;
+      
+      document.getElementById("usdToEgp").value = saved.usdToEgp || defaultSettings.usdToEgp;
+      document.getElementById("usdToBif").value = saved.usdToBif || defaultSettings.usdToBif;
+      document.getElementById("usdToTzs").value = saved.usdToTzs || defaultSettings.usdToTzs;
+      document.getElementById("usdToRwf").value = saved.usdToRwf || defaultSettings.usdToRwf;
+      document.getElementById("usdToUgx").value = saved.usdToUgx || defaultSettings.usdToUgx;
+      document.getElementById("usdToCdf").value = saved.usdToCdf || defaultSettings.usdToCdf;
+      document.getElementById("usdToKes").value = saved.usdToKes || defaultSettings.usdToKes;
+      document.getElementById("usdToCad").value = saved.usdToCad || defaultSettings.usdToCad;
+      document.getElementById("feeBurundi").value = saved.feeBurundi || defaultSettings.feeBurundi;
+      document.getElementById("feeTanzania").value = saved.feeTanzania || defaultSettings.feeTanzania;
+    }
+
+    function calculateTransfer() {
+      const amount = parseFloat(document.getElementById("amount").value);
+      const country = document.getElementById("country").value;
+      const resultDiv = document.getElementById("result");
+
+      if (isNaN(amount) || amount <= 0) {
+        resultDiv.textContent = "Please enter a valid positive amount.";
+        resultDiv.style.color = "#d9534f";
+        return;
+      }
+
+      const settings = JSON.parse(localStorage.getItem("transferSettings")) || defaultSettings;
+      const usdToEgp = settings.usdToEgp;
+      const rates = {
+        burundi: settings.usdToBif,
+        tanzania: settings.usdToTzs,
+        rwanda: settings.usdToRwf,
+        ouganda: settings.usdToUgx,
+        drc: settings.usdToCdf,
+        kenya: settings.usdToKes,
+        canada: settings.usdToCad,
+        usa: 1
+      };
+
+      const amountInUsd = amount / usdToEgp;
+      let fee = 0;
+      if (country === "burundi") {
+        fee = (amountInUsd / 100) * settings.feeBurundi;
+      } else if (country === "tanzania") {
+        fee = (amountInUsd / 100) * settings.feeTanzania;
+      }
+
+      const finalUsd = amountInUsd - (fee / usdToEgp);
+      const rate = rates[country] || 1;
+      const received = finalUsd * rate;
+      const currency = currencySymbols[country] || '';
+
+      // Format numbers with commas
+      const formattedReceived = received.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+
+      resultDiv.textContent = `Recipient receives: ${formattedReceived} ${currency}`;
+      resultDiv.style.color = "#003580";
+
+      // Add to transaction history
+      const transaction = {
+        date: new Date().toLocaleString(),
+        amount: amount,
+        country: country.charAt(0).toUpperCase() + country.slice(1),
+        received: received,
+        currency: currency
+      };
+      
+      transactionHistory.unshift(transaction); // Add to beginning of array
+      if (transactionHistory.length > 10) {
+        transactionHistory.pop(); // Keep only last 10 transactions
+      }
+      
+      updateHistoryDisplay();
+    }
+
+    function updateHistoryDisplay() {
+      const historyList = document.getElementById("historyList");
+      historyList.innerHTML = '';
+      
+      if (transactionHistory.length === 0) {
+        historyList.innerHTML = '<div class="history-item">No transactions yet</div>';
+        return;
+      }
+      
+      transactionHistory.forEach(transaction => {
+        const formattedAmount = transaction.amount.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+        
+        const formattedReceived = transaction.received.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+        
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.innerHTML = `
+          <strong>${transaction.date}</strong><br>
+          Sent: ${formattedAmount} EGP to ${transaction.country}<br>
+          Received: ${formattedReceived} ${transaction.currency}
+        `;
+        historyList.appendChild(item);
+      });
+    }
+
+    function clearHistory() {
+      if (confirm("Are you sure you want to clear all transaction history?")) {
+        transactionHistory = [];
+        updateHistoryDisplay();
+        localStorage.removeItem(`transferHistory_${currentUser}`);
+      }
+    }
+
+    window.onload = () => {
+      loadSettings();
+      document.getElementById("loginPanel").style.display = "block";
+      
+      // Load default settings if none exist
+      if (!localStorage.getItem("transferSettings")) {
+        localStorage.setItem("transferSettings", JSON.stringify(defaultSettings));
+      }
+    }
+  </script>
+</body>
+</html>
