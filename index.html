@@ -177,16 +177,8 @@
       position: relative;
     }
 
-    .currency-symbol {
-      position: absolute;
-      left: 10px;
-      top: 38px;
-      font-weight: bold;
-      color: #555;
-    }
-
     input.with-symbol {
-      padding-left: 30px;
+      padding-left: 10px;
     }
 
     @media (max-width: 480px) {
@@ -252,14 +244,9 @@
       <div id="settingsMessage" class="success"></div>
     </div>
 
-    <div class="currency-input">
-      <span class="currency-symbol">EGP</span>
-      <label for="amount">Amount</label>
-      <input type="number" step="0.01" id="amount" placeholder="Amount" class="with-symbol">
-    </div>
-
-    <label for="country">Select Country</label>
-    <select id="country">
+    <label for="fromCountry">From Country</label>
+    <select id="fromCountry">
+      <option value="egypt">Egypt (EGP)</option>
       <option value="burundi">Burundi (BIF)</option>
       <option value="tanzania">Tanzania (TZS)</option>
       <option value="rwanda">Rwanda (RWF)</option>
@@ -270,7 +257,25 @@
       <option value="usa">United States (USD)</option>
     </select>
 
-    <button onclick="toggleSettings()">⚙️ Settings</button>
+    <div class="currency-input">
+      <label for="amount">Amount</label>
+      <input type="number" step="0.01" id="amount" placeholder="Amount" class="with-symbol">
+    </div>
+
+    <label for="toCountry">To Country</label>
+    <select id="toCountry">
+      <option value="egypt">Egypt (EGP)</option>
+      <option value="burundi">Burundi (BIF)</option>
+      <option value="tanzania">Tanzania (TZS)</option>
+      <option value="rwanda">Rwanda (RWF)</option>
+      <option value="ouganda">Uganda (UGX)</option>
+      <option value="drc">DR Congo (CDF)</option>
+      <option value="kenya">Kenya (KES)</option>
+      <option value="canada">Canada (CAD)</option>
+      <option value="usa">United States (USD)</option>
+    </select>
+
+    <button id="settingsButton" onclick="toggleSettings()">⚙️ Settings</button>
     <button onclick="calculateTransfer()">Calculate Transfer</button>
     <div class="result" id="result"></div>
     
@@ -298,6 +303,7 @@
 
     // Currency symbols map
     const currencySymbols = {
+      egypt: 'EGP',
       burundi: 'BIF',
       tanzania: 'TZS',
       rwanda: 'RWF',
@@ -316,6 +322,11 @@
       document.getElementById('usernamePanel').style.display = 'none';
       document.getElementById('calculatorPanel').style.display = 'none';
       document.getElementById(panelId).style.display = 'block';
+      
+      // Hide settings panel if customer
+      if (panelId === 'calculatorPanel' && localStorage.getItem("currentRole") === "customer") {
+        document.getElementById("settingsPanel").style.display = "none";
+      }
     }
 
     function login() {
@@ -325,6 +336,8 @@
       
       if ((role === "admin" && password === "Kabura@2025") || 
           (role === "customer" && password === "KMC@2025")) {
+        // Store the user role in localStorage
+        localStorage.setItem("currentRole", role);
         showPanel('usernamePanel');
         loginError.textContent = "";
       } else {
@@ -344,6 +357,15 @@
       currentUser = username;
       showPanel('calculatorPanel');
       
+      // Hide settings button for customers
+      const settingsButton = document.getElementById("settingsButton");
+      const currentRole = localStorage.getItem("currentRole");
+      if (currentRole === "customer") {
+        settingsButton.style.display = "none";
+      } else {
+        settingsButton.style.display = "block";
+      }
+      
       // Load user-specific history if exists
       const savedHistory = localStorage.getItem(`transferHistory_${currentUser}`);
       if (savedHistory) {
@@ -357,8 +379,10 @@
       localStorage.setItem(`transferHistory_${currentUser}`, JSON.stringify(transactionHistory));
       
       currentUser = '';
+      localStorage.removeItem("currentRole");
       document.getElementById("password").value = '';
       document.getElementById("usernameInput").value = '';
+      document.getElementById("settingsButton").style.display = "block"; // Reset button visibility
       showPanel('rolePanel');
     }
 
@@ -427,7 +451,8 @@
 
     function calculateTransfer() {
       const amount = parseFloat(document.getElementById("amount").value);
-      const country = document.getElementById("country").value;
+      const fromCountry = document.getElementById("fromCountry").value;
+      const toCountry = document.getElementById("toCountry").value;
       const resultDiv = document.getElementById("result");
 
       if (isNaN(amount) || amount <= 0) {
@@ -437,30 +462,23 @@
       }
 
       const settings = JSON.parse(localStorage.getItem("transferSettings")) || defaultSettings;
-      const usdToEgp = settings.usdToEgp;
-      const rates = {
-        burundi: settings.usdToBif,
-        tanzania: settings.usdToTzs,
-        rwanda: settings.usdToRwf,
-        ouganda: settings.usdToUgx,
-        drc: settings.usdToCdf,
-        kenya: settings.usdToKes,
-        canada: settings.usdToCad,
-        usa: 1
-      };
-
-      const amountInUsd = amount / usdToEgp;
+      
+      // Convert from source currency to USD
+      const fromRate = settings[`usdTo${currencySymbols[fromCountry]}`] || 1;
+      const amountInUsd = amount / fromRate;
+      
+      // Convert from USD to target currency
+      const toRate = settings[`usdTo${currencySymbols[toCountry]}`] || 1;
+      let received = amountInUsd * toRate;
+      
+      // Apply fees if applicable
       let fee = 0;
-      if (country === "burundi") {
+      if (toCountry === "burundi") {
         fee = (amountInUsd / 100) * settings.feeBurundi;
-      } else if (country === "tanzania") {
+      } else if (toCountry === "tanzania") {
         fee = (amountInUsd / 100) * settings.feeTanzania;
       }
-
-      const finalUsd = amountInUsd - (fee / usdToEgp);
-      const rate = rates[country] || 1;
-      const received = finalUsd * rate;
-      const currency = currencySymbols[country] || '';
+      received = received - (fee * toRate);
 
       // Format numbers with commas
       const formattedReceived = received.toLocaleString('en-US', {
@@ -468,16 +486,18 @@
         maximumFractionDigits: 2
       });
 
-      resultDiv.textContent = `Recipient receives: ${formattedReceived} ${currency}`;
+      resultDiv.textContent = `Recipient receives: ${formattedReceived} ${currencySymbols[toCountry]}`;
       resultDiv.style.color = "#003580";
 
       // Add to transaction history
       const transaction = {
         date: new Date().toLocaleString(),
+        fromCountry: fromCountry.charAt(0).toUpperCase() + fromCountry.slice(1),
+        toCountry: toCountry.charAt(0).toUpperCase() + toCountry.slice(1),
         amount: amount,
-        country: country.charAt(0).toUpperCase() + country.slice(1),
         received: received,
-        currency: currency
+        fromCurrency: currencySymbols[fromCountry],
+        toCurrency: currencySymbols[toCountry]
       };
       
       transactionHistory.unshift(transaction); // Add to beginning of array
@@ -512,8 +532,10 @@
         item.className = 'history-item';
         item.innerHTML = `
           <strong>${transaction.date}</strong><br>
-          Sent: ${formattedAmount} EGP to ${transaction.country}<br>
-          Received: ${formattedReceived} ${transaction.currency}
+          From: ${transaction.fromCountry} (${transaction.fromCurrency})<br>
+          To: ${transaction.toCountry} (${transaction.toCurrency})<br>
+          Sent: ${formattedAmount} ${transaction.fromCurrency}<br>
+          Received: ${formattedReceived} ${transaction.toCurrency}
         `;
         historyList.appendChild(item);
       });
