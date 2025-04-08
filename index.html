@@ -22,7 +22,6 @@
     }
     /* ===== END OF LOGO STYLES ===== */
 
-    /* ===== ALL ORIGINAL CSS BELOW (UNCHANGED) ===== */
     body {
       font-family: Arial, sans-serif;
       background: linear-gradient(135deg, #003580, #0066cc);
@@ -208,7 +207,7 @@
   </div>
 
   <!-- Panel 2: Username Entry -->
-  <div class="panel" id="usernamePanel">
+  <div class="panel" id="usernamePanel" style="display:none">
     <img src="Logo.png" alt="Logo" class="logo">
     <h2>Enter Username</h2>
     <input type="text" id="usernameInput" placeholder="Enter username">
@@ -217,7 +216,7 @@
   </div>
 
   <!-- Panel 3: Calculator -->
-  <div class="panel" id="calculatorPanel">
+  <div class="panel" id="calculatorPanel" style="display:none">
     <img src="Logo.png" alt="Logo" class="logo">
     <div class="header">
       <h2>Money Transfer Calculator</h2>
@@ -225,19 +224,19 @@
     </div>
     
     <div class="settings" id="settingsPanel">
-      <h3>Exchange Rates</h3>
-      <label>1 USD = <input type="number" step="0.01" id="usdToEgp"> EGP</label>
-      <label>1 USD = <input type="number" step="0.01" id="usdToBif"> BIF</label>
-      <label>1 USD = <input type="number" step="0.01" id="usdToTzs"> TZS</label>
-      <label>1 USD = <input type="number" step="0.01" id="usdToRwf"> RWF</label>
-      <label>1 USD = <input type="number" step="0.01" id="usdToUgx"> UGX</label>
-      <label>1 USD = <input type="number" step="0.01" id="usdToCdf"> CDF</label>
-      <label>1 USD = <input type="number" step="0.01" id="usdToKes"> KES</label>
-      <label>1 USD = <input type="number" step="0.01" id="usdToCad"> CAD</label>
+      <h3>Exchange Rates (EGP to other currencies)</h3>
+      <label>1 EGP = <input type="number" step="0.0001" id="egpToBif"> BIF</label>
+      <label>1 EGP = <input type="number" step="0.0001" id="egpToTzs"> TZS</label>
+      <label>1 EGP = <input type="number" step="0.0001" id="egpToRwf"> RWF</label>
+      <label>1 EGP = <input type="number" step="0.0001" id="egpToUgx"> UGX</label>
+      <label>1 EGP = <input type="number" step="0.0001" id="egpToCdf"> CDF</label>
+      <label>1 EGP = <input type="number" step="0.0001" id="egpToKes"> KES</label>
+      <label>1 EGP = <input type="number" step="0.0001" id="egpToCad"> CAD</label>
+      <label>1 EGP = <input type="number" step="0.0001" id="egpToUsd"> USD</label>
       
-      <h3>Transfer Fees</h3>
-      <label>Burundi Fee per 100 USD = <input type="number" step="0.01" id="feeBurundi"> EGP</label>
-      <label>Tanzania Fee per 100 USD = <input type="number" step="0.01" id="feeTanzania"> EGP</label>
+      <h3>Transfer Fees (in EGP)</h3>
+      <label>Burundi Fee = <input type="number" step="0.01" id="feeBurundi"> EGP</label>
+      <label>Tanzania Fee = <input type="number" step="0.01" id="feeTanzania"> EGP</label>
       
       <button onclick="saveSettings()">Save Settings</button>
       <button onclick="resetSettings()" style="background-color: #d9534f; color: white;">Reset to Default</button>
@@ -247,24 +246,15 @@
     <label for="fromCountry">From Country</label>
     <select id="fromCountry">
       <option value="egypt">Egypt (EGP)</option>
-      <option value="burundi">Burundi (BIF)</option>
-      <option value="tanzania">Tanzania (TZS)</option>
-      <option value="rwanda">Rwanda (RWF)</option>
-      <option value="ouganda">Uganda (UGX)</option>
-      <option value="drc">DR Congo (CDF)</option>
-      <option value="kenya">Kenya (KES)</option>
-      <option value="canada">Canada (CAD)</option>
-      <option value="usa">United States (USD)</option>
     </select>
 
     <div class="currency-input">
-      <label for="amount">Amount</label>
-      <input type="number" step="0.01" id="amount" placeholder="Amount" class="with-symbol">
+      <label for="amount">Amount (EGP)</label>
+      <input type="number" step="0.01" id="amount" placeholder="Amount in EGP" class="with-symbol">
     </div>
 
     <label for="toCountry">To Country</label>
     <select id="toCountry">
-      <option value="egypt">Egypt (EGP)</option>
       <option value="burundi">Burundi (BIF)</option>
       <option value="tanzania">Tanzania (TZS)</option>
       <option value="rwanda">Rwanda (RWF)</option>
@@ -287,18 +277,21 @@
   </div>
 
   <script>
-    // Default settings
+    // Default settings - all rates set to 0 (admin must configure)
     const defaultSettings = {
-      usdToEgp: 30.90,
-      usdToBif: 2850,
-      usdToTzs: 2500,
-      usdToRwf: 1300,
-      usdToUgx: 3700,
-      usdToCdf: 2500,
-      usdToKes: 150,
-      usdToCad: 1.35,
-      feeBurundi: 5,
-      feeTanzania: 4.5
+      // Exchange rates
+      egpToBif: 0,
+      egpToTzs: 0,
+      egpToRwf: 0,
+      egpToUgx: 0,
+      egpToCdf: 0,
+      egpToKes: 0,
+      egpToCad: 0,
+      egpToUsd: 0,
+      
+      // Fees
+      feeBurundi: 0,
+      feeTanzania: 0
     };
 
     // Currency symbols map
@@ -336,7 +329,6 @@
       
       if ((role === "admin" && password === "Kabura@2025") || 
           (role === "customer" && password === "KMC@2025")) {
-        // Store the user role in localStorage
         localStorage.setItem("currentRole", role);
         showPanel('usernamePanel');
         loginError.textContent = "";
@@ -382,7 +374,7 @@
       localStorage.removeItem("currentRole");
       document.getElementById("password").value = '';
       document.getElementById("usernameInput").value = '';
-      document.getElementById("settingsButton").style.display = "block"; // Reset button visibility
+      document.getElementById("settingsButton").style.display = "block";
       showPanel('rolePanel');
     }
 
@@ -394,22 +386,22 @@
 
     function saveSettings() {
       const settings = {
-        usdToEgp: parseFloat(document.getElementById("usdToEgp").value),
-        usdToBif: parseFloat(document.getElementById("usdToBif").value),
-        usdToTzs: parseFloat(document.getElementById("usdToTzs").value),
-        usdToRwf: parseFloat(document.getElementById("usdToRwf").value),
-        usdToUgx: parseFloat(document.getElementById("usdToUgx").value),
-        usdToCdf: parseFloat(document.getElementById("usdToCdf").value),
-        usdToKes: parseFloat(document.getElementById("usdToKes").value),
-        usdToCad: parseFloat(document.getElementById("usdToCad").value),
+        egpToBif: parseFloat(document.getElementById("egpToBif").value),
+        egpToTzs: parseFloat(document.getElementById("egpToTzs").value),
+        egpToRwf: parseFloat(document.getElementById("egpToRwf").value),
+        egpToUgx: parseFloat(document.getElementById("egpToUgx").value),
+        egpToCdf: parseFloat(document.getElementById("egpToCdf").value),
+        egpToKes: parseFloat(document.getElementById("egpToKes").value),
+        egpToCad: parseFloat(document.getElementById("egpToCad").value),
+        egpToUsd: parseFloat(document.getElementById("egpToUsd").value),
         feeBurundi: parseFloat(document.getElementById("feeBurundi").value),
         feeTanzania: parseFloat(document.getElementById("feeTanzania").value)
       };
       
       // Validate settings
       for (const key in settings) {
-        if (isNaN(settings[key]) || settings[key] <= 0) {
-          document.getElementById("settingsMessage").textContent = "Please enter valid positive numbers for all fields.";
+        if (isNaN(settings[key])) {
+          document.getElementById("settingsMessage").textContent = "Please enter valid numbers for all fields.";
           document.getElementById("settingsMessage").className = "error";
           return;
         }
@@ -437,14 +429,14 @@
     function loadSettings() {
       const saved = JSON.parse(localStorage.getItem("transferSettings")) || defaultSettings;
       
-      document.getElementById("usdToEgp").value = saved.usdToEgp || defaultSettings.usdToEgp;
-      document.getElementById("usdToBif").value = saved.usdToBif || defaultSettings.usdToBif;
-      document.getElementById("usdToTzs").value = saved.usdToTzs || defaultSettings.usdToTzs;
-      document.getElementById("usdToRwf").value = saved.usdToRwf || defaultSettings.usdToRwf;
-      document.getElementById("usdToUgx").value = saved.usdToUgx || defaultSettings.usdToUgx;
-      document.getElementById("usdToCdf").value = saved.usdToCdf || defaultSettings.usdToCdf;
-      document.getElementById("usdToKes").value = saved.usdToKes || defaultSettings.usdToKes;
-      document.getElementById("usdToCad").value = saved.usdToCad || defaultSettings.usdToCad;
+      document.getElementById("egpToBif").value = saved.egpToBif || defaultSettings.egpToBif;
+      document.getElementById("egpToTzs").value = saved.egpToTzs || defaultSettings.egpToTzs;
+      document.getElementById("egpToRwf").value = saved.egpToRwf || defaultSettings.egpToRwf;
+      document.getElementById("egpToUgx").value = saved.egpToUgx || defaultSettings.egpToUgx;
+      document.getElementById("egpToCdf").value = saved.egpToCdf || defaultSettings.egpToCdf;
+      document.getElementById("egpToKes").value = saved.egpToKes || defaultSettings.egpToKes;
+      document.getElementById("egpToCad").value = saved.egpToCad || defaultSettings.egpToCad;
+      document.getElementById("egpToUsd").value = saved.egpToUsd || defaultSettings.egpToUsd;
       document.getElementById("feeBurundi").value = saved.feeBurundi || defaultSettings.feeBurundi;
       document.getElementById("feeTanzania").value = saved.feeTanzania || defaultSettings.feeTanzania;
     }
@@ -463,49 +455,62 @@
 
       const settings = JSON.parse(localStorage.getItem("transferSettings")) || defaultSettings;
       
-      // Convert from source currency to USD
-      const fromRate = settings[`usdTo${currencySymbols[fromCountry]}`] || 1;
-      const amountInUsd = amount / fromRate;
-      
-      // Convert from USD to target currency
-      const toRate = settings[`usdTo${currencySymbols[toCountry]}`] || 1;
-      let received = amountInUsd * toRate;
-      
-      // Apply fees if applicable
-      let fee = 0;
-      if (toCountry === "burundi") {
-        fee = (amountInUsd / 100) * settings.feeBurundi;
-      } else if (toCountry === "tanzania") {
-        fee = (amountInUsd / 100) * settings.feeTanzania;
+      try {
+        // Get the direct exchange rate set by admin
+        const exchangeRate = settings[`egpTo${currencySymbols[toCountry]}`] || 0;
+        
+        if (exchangeRate <= 0) {
+          resultDiv.textContent = "Exchange rate not set. Please contact admin.";
+          resultDiv.style.color = "#d9534f";
+          return;
+        }
+        
+        let received = amount * exchangeRate;
+        
+        // Apply fees if applicable
+        let fee = 0;
+        if (toCountry === "burundi") {
+          fee = settings.feeBurundi || 0;
+          received -= fee;
+        } 
+        else if (toCountry === "tanzania") {
+          fee = settings.feeTanzania || 0;
+          received -= fee;
+        }
+
+        // Format the result
+        const formattedReceived = received.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+
+        resultDiv.textContent = `Recipient receives: ${formattedReceived} ${currencySymbols[toCountry]}`;
+        resultDiv.style.color = "#003580";
+
+        // Add to transaction history
+        const transaction = {
+          date: new Date().toLocaleString(),
+          fromCountry: fromCountry.charAt(0).toUpperCase() + fromCountry.slice(1),
+          toCountry: toCountry.charAt(0).toUpperCase() + toCountry.slice(1),
+          amount: amount,
+          received: received,
+          fromCurrency: currencySymbols[fromCountry],
+          toCurrency: currencySymbols[toCountry]
+        };
+        
+        transactionHistory.unshift(transaction);
+        if (transactionHistory.length > 10) {
+          transactionHistory.pop();
+        }
+        
+        updateHistoryDisplay();
+        localStorage.setItem(`transferHistory_${currentUser}`, JSON.stringify(transactionHistory));
+        
+      } catch (error) {
+        resultDiv.textContent = "An error occurred during calculation. Please check your inputs.";
+        resultDiv.style.color = "#d9534f";
+        console.error("Calculation error:", error);
       }
-      received = received - (fee * toRate);
-
-      // Format numbers with commas
-      const formattedReceived = received.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
-
-      resultDiv.textContent = `Recipient receives: ${formattedReceived} ${currencySymbols[toCountry]}`;
-      resultDiv.style.color = "#003580";
-
-      // Add to transaction history
-      const transaction = {
-        date: new Date().toLocaleString(),
-        fromCountry: fromCountry.charAt(0).toUpperCase() + fromCountry.slice(1),
-        toCountry: toCountry.charAt(0).toUpperCase() + toCountry.slice(1),
-        amount: amount,
-        received: received,
-        fromCurrency: currencySymbols[fromCountry],
-        toCurrency: currencySymbols[toCountry]
-      };
-      
-      transactionHistory.unshift(transaction); // Add to beginning of array
-      if (transactionHistory.length > 10) {
-        transactionHistory.pop(); // Keep only last 10 transactions
-      }
-      
-      updateHistoryDisplay();
     }
 
     function updateHistoryDisplay() {
@@ -549,15 +554,21 @@
       }
     }
 
-    window.onload = () => {
+    // Initialize the application
+    window.onload = function() {
+      // Show only the role panel initially
+      document.getElementById('rolePanel').style.display = 'block';
+      document.getElementById('usernamePanel').style.display = 'none';
+      document.getElementById('calculatorPanel').style.display = 'none';
+      
+      // Load settings or set defaults
       loadSettings();
-      showPanel('rolePanel');
       
       // Load default settings if none exist
       if (!localStorage.getItem("transferSettings")) {
         localStorage.setItem("transferSettings", JSON.stringify(defaultSettings));
       }
-    }
+    };
   </script>
 </body>
 </html>
