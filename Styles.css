@@ -1,128 +1,183 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Money Transfer Calculator</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <!-- Panel 1: Welcome Page -->
-  <div class="panel" id="welcomePanel">
-    <div class="logo-container">
-      <img src="Logo.png" alt="Money Transfer Calculator Logo" class="logo">
-    </div>
-    <h1>Welcome to Money Transfer Calculator</h1>
-    <p class="welcome-text">Calculate international money transfers with ease</p>
-    <div class="welcome-buttons">
-      <button class="welcome-btn" id="customerWelcomeBtn">I'm a Customer</button>
-      <button class="welcome-btn" id="adminWelcomeBtn">I'm an Admin</button>
-    </div>
-  </div>
+/* ===== UPDATED LOGO STYLES ===== */
+.logo {
+  width: 100%;
+  height: auto;
+  max-height: 70px;
+  display: block;
+  margin: 0 auto;
+  object-fit: contain;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+.panel {
+  padding-top: 0;
+  overflow: hidden;
+}
+/* ===== END OF LOGO STYLES ===== */
 
-  <!-- Panel 2: Name Input -->
-  <div class="panel" id="namePanel" style="display:none">
-    <div class="logo-container">
-      <img src="Logo.png" alt="Money Transfer Calculator Logo" class="logo">
-    </div>
-    <h2>Tell Us About Yourself</h2>
-    <div class="form-group">
-      <label for="firstName">First Name</label>
-      <input type="text" id="firstName" placeholder="Enter your first name" aria-required="true">
-    </div>
-    <div class="form-group">
-      <label for="lastName">Last Name</label>
-      <input type="text" id="lastName" placeholder="Enter your last name" aria-required="true">
-    </div>
-    <button id="continueBtn">Continue</button>
-    <div id="nameMessage" class="message" role="alert" aria-live="assertive"></div>
-  </div>
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #003580, #0066cc);
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
 
-  <!-- Panel 3: Password -->
-  <div class="panel" id="passwordPanel" style="display:none">
-    <div class="logo-container">
-      <img src="Logo.png" alt="Money Transfer Calculator Logo" class="logo">
-    </div>
-    <h2>Secure Access</h2>
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input type="password" id="password" placeholder="Enter password" aria-required="true">
-    </div>
-    <button id="loginBtn">
-      <span id="loginBtnText">Login</span>
-    </button>
-    <div id="passwordMessage" class="message" role="alert" aria-live="assertive"></div>
-  </div>
+.panel {
+  background: #f4f4f9;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 500px;
+  border: 1px solid #d6d9dc;
+  display: none;
+}
 
-  <!-- Panel 4: Calculator -->
-  <div class="panel" id="calculatorPanel" style="display:none">
-    <div class="logo-container">
-      <img src="Logo.png" alt="Money Transfer Calculator Logo" class="logo">
-    </div>
-    <div class="header">
-      <h2>Money Transfer Calculator</h2>
-      <button class="logout-btn" id="logoutBtn">Logout</button>
-    </div>
-    
-    <div class="settings" id="settingsPanel">
-      <h3>Exchange Rates (1 EGP to other currencies)</h3>
-      <div class="settings-grid" id="exchangeRatesContainer"></div>
-      
-      <h3>Transfer Fees</h3>
-      <div class="form-group">
-        <h4>Fee Calculation Parameters</h4>
-        <label for="baseAmount">Fee of <input type="number" step="0.01" id="baseFee" value="200"> EGP for amount of</label>
-        <input type="number" step="0.01" id="baseAmount" value="5200">
-        <span>EGP</span>
-      </div>
-      
-      <div class="form-group">
-        <button id="saveSettingsBtn">Save Settings</button>
-        <button id="resetSettingsBtn" class="warning">Reset to Default</button>
-      </div>
-      <div id="settingsMessage" class="message" role="alert" aria-live="assertive"></div>
-    </div>
+h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #003580;
+}
 
-    <div class="form-group">
-      <label for="fromCountry">From Country</label>
-      <select id="fromCountry" aria-required="true">
-        <option value="EGP">🇪🇬 Egypt (EGP)</option>
-      </select>
-    </div>
+select, input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  background-color: #ffffff;
+  color: #333;
+  box-sizing: border-box;
+}
 
-    <div class="form-group">
-      <label for="amount">Amount (EGP)</label>
-      <input type="number" step="0.01" id="amount" placeholder="Enter amount in EGP" aria-required="true">
-    </div>
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: #febb02;
+  color: #003580;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-bottom: 12px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
 
-    <div class="form-group">
-      <label for="toCountry">To Country</label>
-      <select id="toCountry" aria-required="true">
-        <option value="KES">🇰🇪 Kenya (KES)</option>
-        <option value="UGX">🇺🇬 Uganda (UGX)</option>
-        <option value="TZS">🇹🇿 Tanzania (TZS)</option>
-        <option value="RWF">🇷🇼 Rwanda (RWF)</option>
-        <option value="BIF">🇧🇮 Burundi (BIF)</option>
-        <option value="CDF">🇨🇩 DR Congo (CDF)</option>
-      </select>
-    </div>
+button:hover {
+  background-color: #e0a800;
+}
 
-    <div class="form-group">
-      <button id="settingsButton">⚙ Settings</button>
-      <button id="calculateBtn">
-        <span id="calculateBtnText">Calculate Transfer</span>
-      </button>
-    </div>
-    
-    <div class="result" id="result" aria-live="polite"></div>
-    
-    <div class="history" id="historyPanel">
-      <h3>Transaction History</h3>
-      <div id="historyList"></div>
-      <button class="clear-history" id="clearHistoryBtn">Clear History</button>
-    </div>
-  </div>
+.result {
+  margin-top: 20px;
+  padding: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  color: #003580;
+  background-color: #e6f0ff;
+  border-radius: 8px;
+  border: 1px solid #b3d4fc;
+}
 
-  <script src="script.js"></script>
-</body>
-</html>
+.settings {
+  margin-top: 20px;
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  display: none;
+  border: 1px solid #b3d4fc;
+  font-size: 14px;
+}
+
+label {
+  color: #003580;
+  font-weight: bold;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.error {
+  color: #d9534f;
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.success {
+  color: #5cb85c;
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logout-btn {
+  background: #d9534f;
+  color: white;
+  width: auto;
+  padding: 8px 15px;
+  font-size: 14px;
+}
+
+.logout-btn:hover {
+  background: #c9302c;
+}
+
+.history {
+  margin-top: 20px;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  background: white;
+}
+
+.history-item {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.history-item:last-child {
+  border-bottom: none;
+}
+
+.clear-history {
+  background: #f0ad4e;
+  margin-top: 10px;
+}
+
+.clear-history:hover {
+  background: #ec971f;
+}
+
+.currency-input {
+  position: relative;
+}
+
+input.with-symbol {
+  padding-left: 10px;
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 10px;
+  }
+  .panel {
+    padding: 15px;
+  }
+}
