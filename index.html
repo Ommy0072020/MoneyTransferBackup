@@ -4,7 +4,191 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Money Transfer Calculator</title>
-  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ===== UPDATED LOGO STYLES ===== */
+    .logo {
+      width: 100%;
+      height: auto;
+      max-height: 70px;
+      display: block;
+      margin: 0 auto;
+      object-fit: contain;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+    .panel {
+      padding-top: 0;
+      overflow: hidden;
+    }
+    /* ===== END OF LOGO STYLES ===== */
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #003580, #0066cc);
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .panel {
+      background: #f4f4f9;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 500px;
+      border: 1px solid #d6d9dc;
+      display: none;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #003580;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+      background-color: #ffffff;
+      color: #333;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #febb02;
+      color: #003580;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-bottom: 12px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #e0a800;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      color: #003580;
+      background-color: #e6f0ff;
+      border-radius: 8px;
+      border: 1px solid #b3d4fc;
+    }
+
+    .settings {
+      margin-top: 20px;
+      background: #ffffff;
+      padding: 15px;
+      border-radius: 8px;
+      display: none;
+      border: 1px solid #b3d4fc;
+      font-size: 14px;
+    }
+
+    label {
+      color: #003580;
+      font-weight: bold;
+      font-size: 14px;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .error {
+      color: #d9534f;
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .success {
+      color: #5cb85c;
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .logout-btn {
+      background: #d9534f;
+      color: white;
+      width: auto;
+      padding: 8px 15px;
+      font-size: 14px;
+    }
+
+    .logout-btn:hover {
+      background: #c9302c;
+    }
+
+    .history {
+      margin-top: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
+      background: white;
+    }
+
+    .history-item {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+
+    .history-item:last-child {
+      border-bottom: none;
+    }
+
+    .clear-history {
+      background: #f0ad4e;
+      margin-top: 10px;
+    }
+
+    .clear-history:hover {
+      background: #ec971f;
+    }
+
+    .currency-input {
+      position: relative;
+    }
+
+    input.with-symbol {
+      padding-left: 10px;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      .panel {
+        padding: 15px;
+      }
+    }
+  </style>
 </head>
 <body>
   <!-- Panel 1: Role Selection -->
@@ -50,6 +234,7 @@
       <label>1 EGP = <input type="number" step="0.0001" id="egpToCad"> CAD</label>
       <label>1 EGP = <input type="number" step="0.0001" id="egpToUsd"> USD</label>
       <label>1 EGP = <input type="number" step="0.0001" id="egpToEur"> EUR</label>
+      <label>1 EGP = <input type="number" step="0.0001" id="egpToXof"> XOF</label>
       
       <h3>Transfer Fees (in EGP)</h3>
       <label>Burundi Fee = <input type="number" step="0.01" id="feeBurundi"> EGP</label>
@@ -74,6 +259,7 @@
       <option value="france">France (EUR)</option>
       <option value="belgium">Belgium (EUR)</option>
       <option value="holland">Netherlands (EUR)</option>
+      <option value="togo">Togo (XOF)</option>
     </select>
 
     <div class="currency-input">
@@ -95,9 +281,10 @@
       <option value="france">France (EUR)</option>
       <option value="belgium">Belgium (EUR)</option>
       <option value="holland">Netherlands (EUR)</option>
+      <option value="togo">Togo (XOF)</option>
     </select>
 
-    <button id="settingsButton" onclick="toggleSettings()">⚙️ Settings</button>
+    <button id="settingsButton" onclick="toggleSettings()">⚙ Settings</button>
     <button onclick="calculateTransfer()">Calculate Transfer</button>
     <div class="result" id="result"></div>
     
@@ -108,6 +295,324 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    // Default settings - all rates set to 0 (admin must configure)
+    const defaultSettings = {
+      // Exchange rates
+      egpToBif: 0,
+      egpToTzs: 0,
+      egpToRwf: 0,
+      egpToUgx: 0,
+      egpToCdf: 0,
+      egpToKes: 0,
+      egpToCad: 0,
+      egpToUsd: 0,
+      egpToEur: 0,
+      egpToXof: 0,
+      
+      // Fees
+      feeBurundi: 0,
+      feeTanzania: 0
+    };
+
+    // Currency symbols map
+    const currencySymbols = {
+      egypt: 'EGP',
+      burundi: 'BIF',
+      tanzania: 'TZS',
+      rwanda: 'RWF',
+      ouganda: 'UGX',
+      drc: 'CDF',
+      kenya: 'KES',
+      canada: 'CAD',
+      usa: 'USD',
+      france: 'EUR',
+      belgium: 'EUR',
+      holland: 'EUR',
+      togo: 'XOF'
+    };
+
+    let currentUser = '';
+    let transactionHistory = [];
+
+    function showPanel(panelId) {
+      document.getElementById('rolePanel').style.display = 'none';
+      document.getElementById('usernamePanel').style.display = 'none';
+      document.getElementById('calculatorPanel').style.display = 'none';
+      document.getElementById(panelId).style.display = 'block';
+      
+      // Hide settings panel if customer
+      if (panelId === 'calculatorPanel' && localStorage.getItem("currentRole") === "customer") {
+        document.getElementById("settingsPanel").style.display = "none";
+      }
+    }
+
+    function login() {
+      const role = document.getElementById("role").value;
+      const password = document.getElementById("password").value;
+      const loginError = document.getElementById("loginError");
+      
+      if ((role === "admin" && password === "Kabura@2025") || 
+          (role === "customer" && password === "KMC@2025")) {
+        localStorage.setItem("currentRole", role);
+        showPanel('usernamePanel');
+        loginError.textContent = "";
+      } else {
+        loginError.textContent = "Invalid password. Please try again.";
+      }
+    }
+
+    function submitUsername() {
+      const username = document.getElementById("usernameInput").value.trim();
+      const usernameError = document.getElementById("usernameError");
+      
+      if (username === "") {
+        usernameError.textContent = "Please enter a username.";
+        return;
+      }
+      
+      currentUser = username;
+      showPanel('calculatorPanel');
+      
+      // Hide settings button for customers
+      const settingsButton = document.getElementById("settingsButton");
+      const currentRole = localStorage.getItem("currentRole");
+      if (currentRole === "customer") {
+        settingsButton.style.display = "none";
+      } else {
+        settingsButton.style.display = "block";
+      }
+      
+      // Load user-specific history if exists
+      const savedHistory = localStorage.getItem(transferHistory_${currentUser});
+      if (savedHistory) {
+        transactionHistory = JSON.parse(savedHistory);
+        updateHistoryDisplay();
+      }
+    }
+
+    function logout() {
+      // Save history before logging out
+      localStorage.setItem(transferHistory_${currentUser}, JSON.stringify(transactionHistory));
+      
+      currentUser = '';
+      localStorage.removeItem("currentRole");
+      document.getElementById("password").value = '';
+      document.getElementById("usernameInput").value = '';
+      document.getElementById("settingsButton").style.display = "block";
+      showPanel('rolePanel');
+    }
+
+    function toggleSettings() {
+      const panel = document.getElementById("settingsPanel");
+      panel.style.display = panel.style.display === "none" ? "block" : "none";
+      document.getElementById("settingsMessage").textContent = "";
+    }
+
+    function saveSettings() {
+      const settings = {
+        egpToBif: parseFloat(document.getElementById("egpToBif").value),
+        egpToTzs: parseFloat(document.getElementById("egpToTzs").value),
+        egpToRwf: parseFloat(document.getElementById("egpToRwf").value),
+        egpToUgx: parseFloat(document.getElementById("egpToUgx").value),
+        egpToCdf: parseFloat(document.getElementById("egpToCdf").value),
+        egpToKes: parseFloat(document.getElementById("egpToKes").value),
+        egpToCad: parseFloat(document.getElementById("egpToCad").value),
+        egpToUsd: parseFloat(document.getElementById("egpToUsd").value),
+        egpToEur: parseFloat(document.getElementById("egpToEur").value),
+        egpToXof: parseFloat(document.getElementById("egpToXof").value),
+        feeBurundi: parseFloat(document.getElementById("feeBurundi").value),
+        feeTanzania: parseFloat(document.getElementById("feeTanzania").value)
+      };
+      
+      // Validate settings
+      for (const key in settings) {
+        if (isNaN(settings[key])) {
+          document.getElementById("settingsMessage").textContent = "Please enter valid numbers for all fields.";
+          document.getElementById("settingsMessage").className = "error";
+          return;
+        }
+      }
+      
+      localStorage.setItem("transferSettings", JSON.stringify(settings));
+      document.getElementById("settingsMessage").textContent = "Settings saved successfully!";
+      document.getElementById("settingsMessage").className = "success";
+      
+      // Hide settings after 2 seconds
+      setTimeout(() => {
+        document.getElementById("settingsPanel").style.display = "none";
+      }, 2000);
+    }
+
+    function resetSettings() {
+      if (confirm("Are you sure you want to reset to default settings?")) {
+        localStorage.removeItem("transferSettings");
+        loadSettings();
+        document.getElementById("settingsMessage").textContent = "Settings reset to defaults!";
+        document.getElementById("settingsMessage").className = "success";
+      }
+    }
+
+    function loadSettings() {
+      const saved = JSON.parse(localStorage.getItem("transferSettings")) || defaultSettings;
+      
+      document.getElementById("egpToBif").value = saved.egpToBif || defaultSettings.egpToBif;
+      document.getElementById("egpToTzs").value = saved.egpToTzs || defaultSettings.egpToTzs;
+      document.getElementById("egpToRwf").value = saved.egpToRwf || defaultSettings.egpToRwf;
+      document.getElementById("egpToUgx").value = saved.egpToUgx || defaultSettings.egpToUgx;
+      document.getElementById("egpToCdf").value = saved.egpToCdf || defaultSettings.egpToCdf;
+      document.getElementById("egpToKes").value = saved.egpToKes || defaultSettings.egpToKes;
+      document.getElementById("egpToCad").value = saved.egpToCad || defaultSettings.egpToCad;
+      document.getElementById("egpToUsd").value = saved.egpToUsd || defaultSettings.egpToUsd;
+      document.getElementById("egpToEur").value = saved.egpToEur || defaultSettings.egpToEur;
+      document.getElementById("egpToXof").value = saved.egpToXof || defaultSettings.egpToXof;
+      document.getElementById("feeBurundi").value = saved.feeBurundi || defaultSettings.feeBurundi;
+      document.getElementById("feeTanzania").value = saved.feeTanzania || defaultSettings.feeTanzania;
+    }
+
+    function calculateTransfer() {
+      const amount = parseFloat(document.getElementById("amount").value);
+      const fromCountry = document.getElementById("fromCountry").value;
+      const toCountry = document.getElementById("toCountry").value;
+      const resultDiv = document.getElementById("result");
+
+      if (isNaN(amount) || amount <= 0) {
+        resultDiv.textContent = "Please enter a valid positive amount.";
+        resultDiv.style.color = "#d9534f";
+        return;
+      }
+
+      const settings = JSON.parse(localStorage.getItem("transferSettings")) || defaultSettings;
+      
+      try {
+        let received = 0;
+        let fee = 0;
+        
+        // For Egypt to other countries (original calculation logic)
+        if (fromCountry === "egypt") {
+          // Get the direct exchange rate set by admin
+          const exchangeRate = settings[egpTo${currencySymbols[toCountry]}] || 0;
+          
+          if (exchangeRate <= 0) {
+            resultDiv.textContent = "Exchange rate not set. Please contact admin.";
+            resultDiv.style.color = "#d9534f";
+            return;
+          }
+          
+          received = amount * exchangeRate;
+          
+          // Apply fees if applicable
+          if (toCountry === "burundi") {
+            fee = settings.feeBurundi || 0;
+            received -= fee;
+          } 
+          else if (toCountry === "tanzania") {
+            fee = settings.feeTanzania || 0;
+            received -= fee;
+          }
+        }
+        // For other country combinations (simple 1:1 conversion for demo)
+        else if (fromCountry === toCountry) {
+          received = amount; // Same currency
+        }
+        else {
+          // For other combinations, we'd need to implement proper conversion logic
+          resultDiv.textContent = "Currency conversion not yet implemented for this pair.";
+          resultDiv.style.color = "#d9534f";
+          return;
+        }
+
+        // Format the result
+        const formattedReceived = received.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+
+        resultDiv.textContent = Recipient receives: ${formattedReceived} ${currencySymbols[toCountry]};
+        resultDiv.style.color = "#003580";
+
+        // Add to transaction history
+        const transaction = {
+          date: new Date().toLocaleString(),
+          fromCountry: fromCountry.charAt(0).toUpperCase() + fromCountry.slice(1),
+          toCountry: toCountry.charAt(0).toUpperCase() + toCountry.slice(1),
+          amount: amount,
+          received: received,
+          fromCurrency: currencySymbols[fromCountry],
+          toCurrency: currencySymbols[toCountry]
+        };
+        
+        transactionHistory.unshift(transaction);
+        if (transactionHistory.length > 10) {
+          transactionHistory.pop();
+        }
+        
+        updateHistoryDisplay();
+        localStorage.setItem(transferHistory_${currentUser}, JSON.stringify(transactionHistory));
+        
+      } catch (error) {
+        resultDiv.textContent = "An error occurred during calculation. Please check your inputs.";
+        resultDiv.style.color = "#d9534f";
+        console.error("Calculation error:", error);
+      }
+    }
+
+    function updateHistoryDisplay() {
+      const historyList = document.getElementById("historyList");
+      historyList.innerHTML = '';
+      
+      if (transactionHistory.length === 0) {
+        historyList.innerHTML = '<div class="history-item">No transactions yet</div>';
+        return;
+      }
+      
+      transactionHistory.forEach(transaction => {
+        const formattedAmount = transaction.amount.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+        
+        const formattedReceived = transaction.received.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+        
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.innerHTML = `
+          <strong>${transaction.date}</strong><br>
+          From: ${transaction.fromCountry} (${transaction.fromCurrency})<br>
+          To: ${transaction.toCountry} (${transaction.toCurrency})<br>
+          Sent: ${formattedAmount} ${transaction.fromCurrency}<br>
+          Received: ${formattedReceived} ${transaction.toCurrency}
+        `;
+        historyList.appendChild(item);
+      });
+    }
+
+    function clearHistory() {
+      if (confirm("Are you sure you want to clear all transaction history?")) {
+        transactionHistory = [];
+        updateHistoryDisplay();
+        localStorage.removeItem(transferHistory_${currentUser});
+      }
+    }
+
+    // Initialize the application
+    window.onload = function() {
+      // Show only the role panel initially
+      document.getElementById('rolePanel').style.display = 'block';
+      document.getElementById('usernamePanel').style.display = 'none';
+      document.getElementById('calculatorPanel').style.display = 'none';
+      
+      // Load settings or set defaults
+      loadSettings();
+      
+      // Load default settings if none exist
+      if (!localStorage.getItem("transferSettings")) {
+        localStorage.setItem("transferSettings", JSON.stringify(defaultSettings));
+      }
+    };
+  </script>
 </body>
 </html>
