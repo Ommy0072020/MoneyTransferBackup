@@ -38,21 +38,6 @@
       <h2>Money Transfer Calculator</h2>
       <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
-    
-    <div class="settings" id="settingsPanel">
-      <h3>Exchange Rates (EGP to other currencies)</h3>
-      <label>1 EGP = <input type="number" step="0.0001" id="egpToBif"> BIF</label>
-      <label>1 EGP = <input type="number" step="0.0001" id="egpToRwf"> RWF</label>
-      <label>1 EGP = <input type="number" step="0.0001" id="egpToKes"> KES</label>
-      <label>1 EGP = <input type="number" step="0.0001" id="egpToTzs"> TZS</label>
-      <label>1 EGP = <input type="number" step="0.0001" id="egpToUgx"> UGX</label>
-      <label>1 EGP = <input type="number" step="0.0001" id="egpToCdf"> CDF</label>
-      <label>1 EGP = <input type="number" step="0.0001" id="egpToCad"> CAD</label>
-      
-      <button onclick="saveSettings()">Save Settings</button>
-      <button onclick="resetSettings()" style="background-color: #d9534f; color: white;">Reset to Default</button>
-      <div id="settingsMessage" class="success"></div>
-    </div>
 
     <label for="fromCountry">From Country</label>
     <select id="fromCountry" disabled>
@@ -75,7 +60,6 @@
       <option value="canada">Canada (CAD)</option>
     </select>
 
-    <button id="settingsButton" onclick="toggleSettings()">⚙ Settings</button>
     <button onclick="calculateTransfer()">Calculate Transfer</button>
     <div class="result" id="result"></div>
     
