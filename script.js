@@ -1,33 +1,23 @@
-// Default settings - all rates set to 0 (admin must configure)
+// Default settings with specified exchange rates
 const defaultSettings = {
-  egpToBif: 0,
-  egpToTzs: 0,
-  egpToRwf: 0,
-  egpToUgx: 0,
-  egpToCdf: 0,
-  egpToKes: 0,
-  egpToCad: 0,
-  egpToUsd: 0,
-  egpToEur: 0,
-  egpToXof: 0,
-  feeBurundi: 0,
-  feeTanzania: 0
+  egpToBif: 133.5,    // Egypt to Burundi
+  egpToRwf: 25.5,     // Egypt to Rwanda
+  egpToKes: 2.3,      // Egypt to Kenya
+  egpToTzs: 48,       // Egypt to Tanzania
+  egpToUgx: 66.60,    // Egypt to Uganda
+  egpToCdf: 51.85,    // Egypt to DR Congo
+  egpToCad: 0.0116    // Egypt to Canada
 };
 
 const currencySymbols = {
   egypt: 'EGP',
   burundi: 'BIF',
-  tanzania: 'TZS',
   rwanda: 'RWF',
+  kenya: 'KES',
+  tanzania: 'TZS',
   ouganda: 'UGX',
   drc: 'CDF',
-  kenya: 'KES',
-  canada: 'CAD',
-  usa: 'USD',
-  france: 'EUR',
-  belgium: 'EUR',
-  holland: 'EUR',
-  togo: 'XOF'
+  canada: 'CAD'
 };
 
 let currentUser = '';
@@ -86,16 +76,9 @@ function submitUsername() {
   const settingsButton = document.getElementById("settingsButton");
   const currentRole = localStorage.getItem("currentRole");
   settingsButton.style.display = currentRole === "customer" ? "none" : "block";
-  
-  const savedHistory = localStorage.getItem(`transferHistory_${currentUser}`);
-  if (savedHistory) {
-    transactionHistory = JSON.parse(savedHistory);
-    updateHistoryDisplay();
-  }
 }
 
 function logout() {
-  localStorage.setItem(`transferHistory_${currentUser}`, JSON.stringify(transactionHistory));
   currentUser = '';
   localStorage.removeItem("currentRole");
   document.getElementById("password").value = '';
@@ -113,17 +96,12 @@ function toggleSettings() {
 function saveSettings() {
   const settings = {
     egpToBif: parseFloat(document.getElementById("egpToBif").value),
-    egpToTzs: parseFloat(document.getElementById("egpToTzs").value),
     egpToRwf: parseFloat(document.getElementById("egpToRwf").value),
+    egpToKes: parseFloat(document.getElementById("egpToKes").value),
+    egpToTzs: parseFloat(document.getElementById("egpToTzs").value),
     egpToUgx: parseFloat(document.getElementById("egpToUgx").value),
     egpToCdf: parseFloat(document.getElementById("egpToCdf").value),
-    egpToKes: parseFloat(document.getElementById("egpToKes").value),
-    egpToCad: parseFloat(document.getElementById("egpToCad").value),
-    egpToUsd: parseFloat(document.getElementById("egpToUsd").value),
-    egpToEur: parseFloat(document.getElementById("egpToEur").value),
-    egpToXof: parseFloat(document.getElementById("egpToXof").value),
-    feeBurundi: parseFloat(document.getElementById("feeBurundi").value),
-    feeTanzania: parseFloat(document.getElementById("feeTanzania").value)
+    egpToCad: parseFloat(document.getElementById("egpToCad").value)
   };
   
   for (const key in settings) {
@@ -145,7 +123,7 @@ function saveSettings() {
 
 function resetSettings() {
   if (confirm("Are you sure you want to reset to default settings?")) {
-    localStorage.removeItem("transferSettings");
+    localStorage.setItem("transferSettings", JSON.stringify(defaultSettings));
     loadSettings();
     document.getElementById("settingsMessage").textContent = "Settings reset to defaults!";
     document.getElementById("settingsMessage").className = "success";
@@ -155,23 +133,17 @@ function resetSettings() {
 function loadSettings() {
   const saved = JSON.parse(localStorage.getItem("transferSettings")) || defaultSettings;
   
-  document.getElementById("egpToBif").value = saved.egpToBif || defaultSettings.egpToBif;
-  document.getElementById("egpToTzs").value = saved.egpToTzs || defaultSettings.egpToTzs;
-  document.getElementById("egpToRwf").value = saved.egpToRwf || defaultSettings.egpToRwf;
-  document.getElementById("egpToUgx").value = saved.egpToUgx || defaultSettings.egpToUgx;
-  document.getElementById("egpToCdf").value = saved.egpToCdf || defaultSettings.egpToCdf;
-  document.getElementById("egpToKes").value = saved.egpToKes || defaultSettings.egpToKes;
-  document.getElementById("egpToCad").value = saved.egpToCad || defaultSettings.egpToCad;
-  document.getElementById("egpToUsd").value = saved.egpToUsd || defaultSettings.egpToUsd;
-  document.getElementById("egpToEur").value = saved.egpToEur || defaultSettings.egpToEur;
-  document.getElementById("egpToXof").value = saved.egpToXof || defaultSettings.egpToXof;
-  document.getElementById("feeBurundi").value = saved.feeBurundi || defaultSettings.feeBurundi;
-  document.getElementById("feeTanzania").value = saved.feeTanzania || defaultSettings.feeTanzania;
+  document.getElementById("egpToBif").value = saved.egpToBif;
+  document.getElementById("egpToRwf").value = saved.egpToRwf;
+  document.getElementById("egpToKes").value = saved.egpToKes;
+  document.getElementById("egpToTzs").value = saved.egpToTzs;
+  document.getElementById("egpToUgx").value = saved.egpToUgx;
+  document.getElementById("egpToCdf").value = saved.egpToCdf;
+  document.getElementById("egpToCad").value = saved.egpToCad;
 }
 
 function calculateTransfer() {
   const amount = parseFloat(document.getElementById("amount").value);
-  const fromCountry = document.getElementById("fromCountry").value;
   const toCountry = document.getElementById("toCountry").value;
   const resultDiv = document.getElementById("result");
 
@@ -185,29 +157,37 @@ function calculateTransfer() {
   
   try {
     let received = 0;
-    let fee = 0;
+    let exchangeRate = 0;
     
-    if (fromCountry === "egypt") {
-      const exchangeRate = settings[`egpTo${currencySymbols[toCountry]}`] || 0;
-      received = amount * exchangeRate;
-      
-      if (toCountry === "burundi") {
-        fee = settings.feeBurundi || 0;
-        received -= fee;
-      } 
-      else if (toCountry === "tanzania") {
-        fee = settings.feeTanzania || 0;
-        received -= fee;
-      }
+    switch(toCountry) {
+      case "burundi":
+        exchangeRate = settings.egpToBif;
+        break;
+      case "rwanda":
+        exchangeRate = settings.egpToRwf;
+        break;
+      case "kenya":
+        exchangeRate = settings.egpToKes;
+        break;
+      case "tanzania":
+        exchangeRate = settings.egpToTzs;
+        break;
+      case "ouganda":
+        exchangeRate = settings.egpToUgx;
+        break;
+      case "drc":
+        exchangeRate = settings.egpToCdf;
+        break;
+      case "canada":
+        exchangeRate = settings.egpToCad;
+        break;
+      default:
+        resultDiv.textContent = "Invalid country selection.";
+        resultDiv.style.color = "#d9534f";
+        return;
     }
-    else if (fromCountry === toCountry) {
-      received = amount;
-    }
-    else {
-      resultDiv.textContent = "Currency conversion not yet implemented for this pair.";
-      resultDiv.style.color = "#d9534f";
-      return;
-    }
+    
+    received = amount * exchangeRate;
 
     const formattedReceived = received.toLocaleString('en-US', {
       minimumFractionDigits: 2,
@@ -219,11 +199,11 @@ function calculateTransfer() {
 
     const transaction = {
       date: new Date().toLocaleString(),
-      fromCountry: fromCountry.charAt(0).toUpperCase() + fromCountry.slice(1),
+      fromCountry: "Egypt",
       toCountry: toCountry.charAt(0).toUpperCase() + toCountry.slice(1),
       amount: amount,
       received: received,
-      fromCurrency: currencySymbols[fromCountry],
+      fromCurrency: "EGP",
       toCurrency: currencySymbols[toCountry]
     };
     
@@ -232,54 +212,10 @@ function calculateTransfer() {
       transactionHistory.pop();
     }
     
-    updateHistoryDisplay();
-    localStorage.setItem(`transferHistory_${currentUser}`, JSON.stringify(transactionHistory));
-    
   } catch (error) {
     resultDiv.textContent = "An error occurred during calculation. Please check your inputs.";
     resultDiv.style.color = "#d9534f";
     console.error("Calculation error:", error);
-  }
-}
-
-function updateHistoryDisplay() {
-  const historyList = document.getElementById("historyList");
-  historyList.innerHTML = '';
-  
-  if (transactionHistory.length === 0) {
-    historyList.innerHTML = '<div class="history-item">No transactions yet</div>';
-    return;
-  }
-  
-  transactionHistory.forEach(transaction => {
-    const formattedAmount = transaction.amount.toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
-    
-    const formattedReceived = transaction.received.toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
-    
-    const item = document.createElement('div');
-    item.className = 'history-item';
-    item.innerHTML = `
-      <strong>${transaction.date}</strong><br>
-      From: ${transaction.fromCountry} (${transaction.fromCurrency})<br>
-      To: ${transaction.toCountry} (${transaction.toCurrency})<br>
-      Sent: ${formattedAmount} ${transaction.fromCurrency}<br>
-      Received: ${formattedReceived} ${transaction.toCurrency}
-    `;
-    historyList.appendChild(item);
-  });
-}
-
-function clearHistory() {
-  if (confirm("Are you sure you want to clear all transaction history?")) {
-    transactionHistory = [];
-    updateHistoryDisplay();
-    localStorage.removeItem(`transferHistory_${currentUser}`);
   }
 }
 
