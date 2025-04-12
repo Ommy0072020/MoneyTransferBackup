@@ -68,6 +68,12 @@ input.with-symbol {
   padding-left: 10px;
 }
 
+/* Disabled select styling */
+select:disabled {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
 /* Buttons */
 button {
   width: 100%;
@@ -98,15 +104,6 @@ button:hover {
 
 .logout-btn:hover {
   background: #c9302c;
-}
-
-.clear-history {
-  background: #f0ad4e;
-  margin-top: 10px;
-}
-
-.clear-history:hover {
-  background: #ec971f;
 }
 
 .request-btn {
@@ -168,30 +165,6 @@ button:hover {
   display: none;
   border: 1px solid #b3d4fc;
   font-size: 14px;
-}
-
-.history {
-  margin-top: 20px;
-  max-height: 200px;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px;
-  background: white;
-}
-
-.history-item {
-  padding: 8px;
-  border-bottom: 1px solid #eee;
-  font-size: 14px;
-}
-
-.history-item:last-child {
-  border-bottom: none;
-}
-
-.currency-input {
-  position: relative;
 }
 
 /* Request Form Section */
