@@ -1,12 +1,12 @@
-// Default settings with specified exchange rates
-const defaultSettings = {
-  egpToBif: 133.5,    // Egypt to Burundi
-  egpToRwf: 25.5,     // Egypt to Rwanda
-  egpToKes: 2.3,      // Egypt to Kenya
-  egpToTzs: 48,       // Egypt to Tanzania
-  egpToUgx: 66.60,    // Egypt to Uganda
-  egpToCdf: 51.85,    // Egypt to DR Congo
-  egpToCad: 0.0116    // Egypt to Canada
+// Fixed exchange rates
+const exchangeRates = {
+  burundi: 133.5,  // EGP to BIF
+  rwanda: 25.5,    // EGP to RWF
+  kenya: 2.3,      // EGP to KES
+  tanzania: 48,    // EGP to TZS
+  ouganda: 66.60,  // EGP to UGX
+  drc: 51.85,      // EGP to CDF
+  canada: 0.0116   // EGP to CAD
 };
 
 const currencySymbols = {
@@ -21,18 +21,12 @@ const currencySymbols = {
 };
 
 let currentUser = '';
-let transactionHistory = [];
 
 // Initialize the application
 window.onload = function() {
   document.getElementById('rolePanel').style.display = 'block';
   document.getElementById('usernamePanel').style.display = 'none';
   document.getElementById('calculatorPanel').style.display = 'none';
-  loadSettings();
-  
-  if (!localStorage.getItem("transferSettings")) {
-    localStorage.setItem("transferSettings", JSON.stringify(defaultSettings));
-  }
 };
 
 function showPanel(panelId) {
@@ -40,10 +34,6 @@ function showPanel(panelId) {
   document.getElementById('usernamePanel').style.display = 'none';
   document.getElementById('calculatorPanel').style.display = 'none';
   document.getElementById(panelId).style.display = 'block';
-  
-  if (panelId === 'calculatorPanel' && localStorage.getItem("currentRole") === "customer") {
-    document.getElementById("settingsPanel").style.display = "none";
-  }
 }
 
 function login() {
@@ -72,10 +62,6 @@ function submitUsername() {
   
   currentUser = username;
   showPanel('calculatorPanel');
-  
-  const settingsButton = document.getElementById("settingsButton");
-  const currentRole = localStorage.getItem("currentRole");
-  settingsButton.style.display = currentRole === "customer" ? "none" : "block";
 }
 
 function logout() {
@@ -83,63 +69,7 @@ function logout() {
   localStorage.removeItem("currentRole");
   document.getElementById("password").value = '';
   document.getElementById("usernameInput").value = '';
-  document.getElementById("settingsButton").style.display = "block";
   showPanel('rolePanel');
-}
-
-function toggleSettings() {
-  const panel = document.getElementById("settingsPanel");
-  panel.style.display = panel.style.display === "none" ? "block" : "none";
-  document.getElementById("settingsMessage").textContent = "";
-}
-
-function saveSettings() {
-  const settings = {
-    egpToBif: parseFloat(document.getElementById("egpToBif").value),
-    egpToRwf: parseFloat(document.getElementById("egpToRwf").value),
-    egpToKes: parseFloat(document.getElementById("egpToKes").value),
-    egpToTzs: parseFloat(document.getElementById("egpToTzs").value),
-    egpToUgx: parseFloat(document.getElementById("egpToUgx").value),
-    egpToCdf: parseFloat(document.getElementById("egpToCdf").value),
-    egpToCad: parseFloat(document.getElementById("egpToCad").value)
-  };
-  
-  for (const key in settings) {
-    if (isNaN(settings[key])) {
-      document.getElementById("settingsMessage").textContent = "Please enter valid numbers for all fields.";
-      document.getElementById("settingsMessage").className = "error";
-      return;
-    }
-  }
-  
-  localStorage.setItem("transferSettings", JSON.stringify(settings));
-  document.getElementById("settingsMessage").textContent = "Settings saved successfully!";
-  document.getElementById("settingsMessage").className = "success";
-  
-  setTimeout(() => {
-    document.getElementById("settingsPanel").style.display = "none";
-  }, 2000);
-}
-
-function resetSettings() {
-  if (confirm("Are you sure you want to reset to default settings?")) {
-    localStorage.setItem("transferSettings", JSON.stringify(defaultSettings));
-    loadSettings();
-    document.getElementById("settingsMessage").textContent = "Settings reset to defaults!";
-    document.getElementById("settingsMessage").className = "success";
-  }
-}
-
-function loadSettings() {
-  const saved = JSON.parse(localStorage.getItem("transferSettings")) || defaultSettings;
-  
-  document.getElementById("egpToBif").value = saved.egpToBif;
-  document.getElementById("egpToRwf").value = saved.egpToRwf;
-  document.getElementById("egpToKes").value = saved.egpToKes;
-  document.getElementById("egpToTzs").value = saved.egpToTzs;
-  document.getElementById("egpToUgx").value = saved.egpToUgx;
-  document.getElementById("egpToCdf").value = saved.egpToCdf;
-  document.getElementById("egpToCad").value = saved.egpToCad;
 }
 
 function calculateTransfer() {
@@ -153,70 +83,17 @@ function calculateTransfer() {
     return;
   }
 
-  const settings = JSON.parse(localStorage.getItem("transferSettings")) || defaultSettings;
-  
-  try {
-    let received = 0;
-    let exchangeRate = 0;
-    
-    switch(toCountry) {
-      case "burundi":
-        exchangeRate = settings.egpToBif;
-        break;
-      case "rwanda":
-        exchangeRate = settings.egpToRwf;
-        break;
-      case "kenya":
-        exchangeRate = settings.egpToKes;
-        break;
-      case "tanzania":
-        exchangeRate = settings.egpToTzs;
-        break;
-      case "ouganda":
-        exchangeRate = settings.egpToUgx;
-        break;
-      case "drc":
-        exchangeRate = settings.egpToCdf;
-        break;
-      case "canada":
-        exchangeRate = settings.egpToCad;
-        break;
-      default:
-        resultDiv.textContent = "Invalid country selection.";
-        resultDiv.style.color = "#d9534f";
-        return;
-    }
-    
-    received = amount * exchangeRate;
+  const rate = exchangeRates[toCountry];
+  const received = amount * rate;
+  const currencySymbol = currencySymbols[toCountry];
 
-    const formattedReceived = received.toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
+  const formattedReceived = received.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
 
-    resultDiv.textContent = `Recipient receives: ${formattedReceived} ${currencySymbols[toCountry]}`;
-    resultDiv.style.color = "#003580";
-
-    const transaction = {
-      date: new Date().toLocaleString(),
-      fromCountry: "Egypt",
-      toCountry: toCountry.charAt(0).toUpperCase() + toCountry.slice(1),
-      amount: amount,
-      received: received,
-      fromCurrency: "EGP",
-      toCurrency: currencySymbols[toCountry]
-    };
-    
-    transactionHistory.unshift(transaction);
-    if (transactionHistory.length > 10) {
-      transactionHistory.pop();
-    }
-    
-  } catch (error) {
-    resultDiv.textContent = "An error occurred during calculation. Please check your inputs.";
-    resultDiv.style.color = "#d9534f";
-    console.error("Calculation error:", error);
-  }
+  resultDiv.textContent = `Recipient receives: ${formattedReceived} ${currencySymbol}`;
+  resultDiv.style.color = "#003580";
 }
 
 // Open Google Form in new tab
