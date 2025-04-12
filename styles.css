@@ -157,16 +157,6 @@ button:hover {
   margin-bottom: 20px;
 }
 
-.settings {
-  margin-top: 20px;
-  background: #ffffff;
-  padding: 15px;
-  border-radius: 8px;
-  display: none;
-  border: 1px solid #b3d4fc;
-  font-size: 14px;
-}
-
 /* Request Form Section */
 .request-form {
   margin-top: 20px;
