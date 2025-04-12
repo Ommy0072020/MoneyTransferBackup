@@ -171,11 +171,105 @@ input.with-symbol {
   padding-left: 10px;
 }
 
+/* New styles for the request form section */
+.request-form {
+  margin-top: 20px;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #b3d4fc;
+  text-align: center;
+}
+
+.request-form h3 {
+  color: #003580;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.request-btn {
+  background-color: #5cb85c;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+}
+
+.request-btn:hover {
+  background-color: #4cae4c;
+}
+
+/* Styles for the form modal */
+#formContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  display: none;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+#formContainer > div {
+  background: white;
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 8px;
+  position: relative;
+}
+
+#formContainer iframe {
+  width: 100%;
+  height: 1621px;
+  border: none;
+  margin-top: 30px;
+}
+
+#formContainer button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #d9534f;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  width: auto;
+  font-size: 14px;
+}
+
+#formContainer button:hover {
+  background: #c9302c;
+}
+
 @media (max-width: 480px) {
   body {
     padding: 10px;
   }
   .panel {
     padding: 15px;
+  }
+  
+  /* Adjust form modal for mobile */
+  #formContainer {
+    padding: 10px;
+  }
+  
+  #formContainer > div {
+    margin: 10px auto;
+    padding: 15px;
+  }
+  
+  #formContainer iframe {
+    height: 1200px; /* Reduced height for mobile */
   }
 }
