@@ -38,6 +38,7 @@ window.onload = function() {
   document.getElementById('rolePanel').style.display = 'block';
   document.getElementById('usernamePanel').style.display = 'none';
   document.getElementById('calculatorPanel').style.display = 'none';
+  document.getElementById('formContainer').style.display = 'none';
   loadSettings();
   
   if (!localStorage.getItem("transferSettings")) {
@@ -102,6 +103,7 @@ function logout() {
   document.getElementById("usernameInput").value = '';
   document.getElementById("settingsButton").style.display = "block";
   showPanel('rolePanel');
+  closeForm(); // Ensure form is closed when logging out
 }
 
 function toggleSettings() {
@@ -288,4 +290,15 @@ function clearHistory() {
     updateHistoryDisplay();
     localStorage.removeItem(`transferHistory_${currentUser}`);
   }
+}
+
+// New functions for form handling
+function openTransferForm() {
+  document.getElementById('formContainer').style.display = 'block';
+  // Scroll to top of the form
+  document.querySelector('#formContainer iframe').scrollIntoView({ behavior: 'smooth' });
+}
+
+function closeForm() {
+  document.getElementById('formContainer').style.display = 'none';
 }
