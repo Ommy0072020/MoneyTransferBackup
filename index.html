@@ -63,9 +63,14 @@
     <button onclick="calculateTransfer()">Calculate Transfer</button>
     <div class="result" id="result"></div>
     
-    <div class="request-form">
+    <div class="request-form" id="customerRequestForm">
       <h3>Need to make a transfer?</h3>
       <button class="request-btn" onclick="openTransferForm()">Request Transfer</button>
+    </div>
+
+    <div class="request-form" id="adminRequestForm" style="display:none">
+      <h3>View Submitted Requests</h3>
+      <button class="request-btn" onclick="viewRequests()">View Requests</button>
     </div>
   </div>
 
