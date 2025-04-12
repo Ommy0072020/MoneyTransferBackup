@@ -38,7 +38,6 @@ window.onload = function() {
   document.getElementById('rolePanel').style.display = 'block';
   document.getElementById('usernamePanel').style.display = 'none';
   document.getElementById('calculatorPanel').style.display = 'none';
-  document.getElementById('formContainer').style.display = 'none';
   loadSettings();
   
   if (!localStorage.getItem("transferSettings")) {
@@ -103,7 +102,6 @@ function logout() {
   document.getElementById("usernameInput").value = '';
   document.getElementById("settingsButton").style.display = "block";
   showPanel('rolePanel');
-  closeForm(); // Ensure form is closed when logging out
 }
 
 function toggleSettings() {
@@ -191,13 +189,6 @@ function calculateTransfer() {
     
     if (fromCountry === "egypt") {
       const exchangeRate = settings[`egpTo${currencySymbols[toCountry]}`] || 0;
-      
-      if (exchangeRate <= 0) {
-        resultDiv.textContent = "Exchange rate not set. Please contact admin.";
-        resultDiv.style.color = "#d9534f";
-        return;
-      }
-      
       received = amount * exchangeRate;
       
       if (toCountry === "burundi") {
@@ -292,13 +283,10 @@ function clearHistory() {
   }
 }
 
-// New functions for form handling
+// Open Google Form in new tab
 function openTransferForm() {
-  document.getElementById('formContainer').style.display = 'block';
-  // Scroll to top of the form
-  document.querySelector('#formContainer iframe').scrollIntoView({ behavior: 'smooth' });
-}
-
-function closeForm() {
-  document.getElementById('formContainer').style.display = 'none';
+  window.open(
+    'https://docs.google.com/forms/d/e/1FAIpQLSd5EONg0TWXuERMa4cUYBKk2oImEP0oxcLWt-887pO0Nw7kgA/viewform',
+    '_blank'
+  );
 }
