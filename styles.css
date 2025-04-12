@@ -1,18 +1,4 @@
-.logo {
-  width: 100%;
-  height: auto;
-  max-height: 70px;
-  display: block;
-  margin: 0 auto;
-  object-fit: contain;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-}
-.panel {
-  padding-top: 0;
-  overflow: hidden;
-}
-
+/* Base Styles */
 body {
   font-family: Arial, sans-serif;
   background: linear-gradient(135deg, #003580, #0066cc);
@@ -24,6 +10,11 @@ body {
   margin: 0;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+/* Panel Styles */
 .panel {
   background: #f4f4f9;
   padding: 25px;
@@ -33,14 +24,38 @@ body {
   max-width: 500px;
   border: 1px solid #d6d9dc;
   display: none;
+  overflow: hidden;
 }
 
+.panel {
+  padding-top: 0;
+}
+
+/* Logo Styles */
+.logo {
+  width: 100%;
+  height: auto;
+  max-height: 70px;
+  display: block;
+  margin: 0 auto;
+  object-fit: contain;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+/* Typography */
 h2 {
   text-align: center;
   margin-bottom: 25px;
   color: #003580;
 }
 
+h3 {
+  color: #003580;
+  margin-bottom: 15px;
+}
+
+/* Form Elements */
 select, input {
   width: 100%;
   padding: 10px;
@@ -53,6 +68,11 @@ select, input {
   box-sizing: border-box;
 }
 
+input.with-symbol {
+  padding-left: 10px;
+}
+
+/* Buttons */
 button {
   width: 100%;
   padding: 12px;
@@ -71,6 +91,45 @@ button:hover {
   background-color: #e0a800;
 }
 
+/* Special Buttons */
+.logout-btn {
+  background: #d9534f;
+  color: white;
+  width: auto;
+  padding: 8px 15px;
+  font-size: 14px;
+}
+
+.logout-btn:hover {
+  background: #c9302c;
+}
+
+.clear-history {
+  background: #f0ad4e;
+  margin-top: 10px;
+}
+
+.clear-history:hover {
+  background: #ec971f;
+}
+
+.request-btn {
+  background-color: #5cb85c;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+}
+
+.request-btn:hover {
+  background-color: #4cae4c;
+}
+
+/* Results & Messages */
 .result {
   margin-top: 20px;
   padding: 15px;
@@ -81,24 +140,6 @@ button:hover {
   background-color: #e6f0ff;
   border-radius: 8px;
   border: 1px solid #b3d4fc;
-}
-
-.settings {
-  margin-top: 20px;
-  background: #ffffff;
-  padding: 15px;
-  border-radius: 8px;
-  display: none;
-  border: 1px solid #b3d4fc;
-  font-size: 14px;
-}
-
-label {
-  color: #003580;
-  font-weight: bold;
-  font-size: 14px;
-  display: block;
-  margin-bottom: 5px;
 }
 
 .error {
@@ -115,6 +156,7 @@ label {
   font-size: 14px;
 }
 
+/* Layout Components */
 .header {
   display: flex;
   justify-content: space-between;
@@ -122,16 +164,14 @@ label {
   margin-bottom: 20px;
 }
 
-.logout-btn {
-  background: #d9534f;
-  color: white;
-  width: auto;
-  padding: 8px 15px;
+.settings {
+  margin-top: 20px;
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  display: none;
+  border: 1px solid #b3d4fc;
   font-size: 14px;
-}
-
-.logout-btn:hover {
-  background: #c9302c;
 }
 
 .history {
@@ -154,24 +194,11 @@ label {
   border-bottom: none;
 }
 
-.clear-history {
-  background: #f0ad4e;
-  margin-top: 10px;
-}
-
-.clear-history:hover {
-  background: #ec971f;
-}
-
 .currency-input {
   position: relative;
 }
 
-input.with-symbol {
-  padding-left: 10px;
-}
-
-/* New styles for the request form section */
+/* Request Form Section */
 .request-form {
   margin-top: 20px;
   padding: 15px;
@@ -181,29 +208,7 @@ input.with-symbol {
   text-align: center;
 }
 
-.request-form h3 {
-  color: #003580;
-  margin-bottom: 15px;
-  font-size: 16px;
-}
-
-.request-btn {
-  background-color: #5cb85c;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: 10px;
-  transition: background-color 0.3s;
-}
-
-.request-btn:hover {
-  background-color: #4cae4c;
-}
-
-/* Styles for the form modal */
+/* Google Form Modal */
 #formContainer {
   position: fixed;
   top: 0;
@@ -216,60 +221,105 @@ input.with-symbol {
   padding: 20px;
   box-sizing: border-box;
   overflow-y: auto;
+  scroll-behavior: smooth;
 }
 
 #formContainer > div {
   background: white;
   max-width: 700px;
   margin: 20px auto;
-  padding: 20px;
+  padding: 30px 20px 20px;
   border-radius: 8px;
   position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 #formContainer iframe {
   width: 100%;
-  height: 1621px;
+  height: 2000px;
   border: none;
-  margin-top: 30px;
+  margin-top: 10px;
+  min-height: 100%;
 }
 
 #formContainer button {
-  position: absolute;
+  position: sticky;
   top: 10px;
   right: 10px;
   background: #d9534f;
   color: white;
   border: none;
-  padding: 5px 10px;
+  padding: 8px 15px;
   border-radius: 4px;
   width: auto;
   font-size: 14px;
+  z-index: 1001;
+  float: right;
+  margin-bottom: 10px;
 }
 
-#formContainer button:hover {
-  background: #c9302c;
+/* Custom Scrollbars */
+#formContainer > div::-webkit-scrollbar {
+  width: 8px;
 }
 
-@media (max-width: 480px) {
+#formContainer > div::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+#formContainer > div::-webkit-scrollbar-thumb {
+  background: #003580;
+  border-radius: 4px;
+}
+
+#formContainer > div::-webkit-scrollbar-thumb:hover {
+  background: #0066cc;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
   body {
     padding: 10px;
   }
+  
   .panel {
     padding: 15px;
   }
   
-  /* Adjust form modal for mobile */
   #formContainer {
     padding: 10px;
   }
   
   #formContainer > div {
     margin: 10px auto;
-    padding: 15px;
+    padding: 25px 15px 15px;
+    max-height: 85vh;
   }
   
   #formContainer iframe {
-    height: 1200px; /* Reduced height for mobile */
+    height: 1800px;
+  }
+  
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .logout-btn {
+    margin-top: 10px;
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  #formContainer iframe {
+    height: 1600px;
+  }
+  
+  button, .request-btn {
+    padding: 10px;
+    font-size: 15px;
   }
 }
