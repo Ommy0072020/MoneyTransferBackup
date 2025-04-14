@@ -1,12 +1,21 @@
-// Fixed exchange rates
+// Fixed exchange rates (two-way rates)
 const exchangeRates = {
-  burundi: 133.5,  // EGP to BIF
-  rwanda: 25.5,    // EGP to RWF
-  kenya: 2.3,      // EGP to KES
-  tanzania: 48,    // EGP to TZS
-  ouganda: 66.60,  // EGP to UGX
-  drc: 51.85,      // EGP to CDF
-  canada: 0.0116   // EGP to CAD
+  egypt: {
+    burundi: 133.5,  // EGP to BIF
+    rwanda: 25.5,    // EGP to RWF
+    kenya: 2.3,      // EGP to KES
+    tanzania: 48,    // EGP to TZS
+    ouganda: 66.60,  // EGP to UGX
+    drc: 51.85,      // EGP to CDF
+    canada: 0.0116   // EGP to CAD
+  },
+  burundi: { egypt: 0.0075 },  // BIF to EGP
+  rwanda: { egypt: 0.0392 },   // RWF to EGP
+  kenya: { egypt: 0.4348 },    // KES to EGP
+  tanzania: { egypt: 0.0208 }, // TZS to EGP
+  ouganda: { egypt: 0.0150 },  // UGX to EGP
+  drc: { egypt: 0.0193 },      // CDF to EGP
+  canada: { egypt: 86.21 }     // CAD to EGP
 };
 
 const currencySymbols = {
@@ -28,6 +37,10 @@ window.onload = function() {
   document.getElementById('rolePanel').style.display = 'block';
   document.getElementById('usernamePanel').style.display = 'none';
   document.getElementById('calculatorPanel').style.display = 'none';
+  
+  // Set up event listeners for country changes
+  document.getElementById('fromCountry').addEventListener('change', updateCountries);
+  document.getElementById('toCountry').addEventListener('change', updateCountries);
 };
 
 function showPanel(panelId) {
@@ -84,8 +97,35 @@ function logout() {
   showPanel('rolePanel');
 }
 
+function updateCountries() {
+  const fromCountry = document.getElementById("fromCountry").value;
+  const toCountry = document.getElementById("toCountry").value;
+  
+  // If from country is changed to non-Egypt, set to country to Egypt
+  if (fromCountry !== "egypt") {
+    document.getElementById("toCountry").value = "egypt";
+  }
+  // If to country is changed to non-Egypt, set from country to Egypt
+  else if (toCountry !== "egypt") {
+    document.getElementById("fromCountry").value = "egypt";
+  }
+}
+
+function swapCountries() {
+  const fromCountry = document.getElementById("fromCountry").value;
+  const toCountry = document.getElementById("toCountry").value;
+  
+  // Only allow swapping if one of them is Egypt
+  if (fromCountry === "egypt" || toCountry === "egypt") {
+    document.getElementById("fromCountry").value = toCountry;
+    document.getElementById("toCountry").value = fromCountry;
+    updateCountries();
+  }
+}
+
 function calculateTransfer() {
   const amount = parseFloat(document.getElementById("amount").value);
+  const fromCountry = document.getElementById("fromCountry").value;
   const toCountry = document.getElementById("toCountry").value;
   const resultDiv = document.getElementById("result");
 
@@ -95,16 +135,28 @@ function calculateTransfer() {
     return;
   }
 
-  const rate = exchangeRates[toCountry];
+  let rate, sourceCurrency, targetCurrency;
+  
+  if (fromCountry === "egypt") {
+    // Transfer from Egypt to another country
+    rate = exchangeRates.egypt[toCountry];
+    sourceCurrency = currencySymbols.egypt;
+    targetCurrency = currencySymbols[toCountry];
+  } else {
+    // Transfer from another country to Egypt
+    rate = exchangeRates[fromCountry].egypt;
+    sourceCurrency = currencySymbols[fromCountry];
+    targetCurrency = currencySymbols.egypt;
+  }
+
   const received = amount * rate;
-  const currencySymbol = currencySymbols[toCountry];
 
   const formattedReceived = received.toLocaleString('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });
 
-  resultDiv.textContent = `Recipient receives: ${formattedReceived} ${currencySymbol}`;
+  resultDiv.textContent = `Recipient receives: ${formattedReceived} ${targetCurrency}`;
   resultDiv.style.color = "#003580";
 }
 
