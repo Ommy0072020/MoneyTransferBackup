@@ -68,10 +68,28 @@ input.with-symbol {
   padding-left: 10px;
 }
 
-/* Disabled select styling */
-select:disabled {
-  background-color: #f0f0f0;
-  color: #666;
+/* Country Selection */
+.country-selection {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.country-selection > div {
+  flex: 1;
+}
+
+.swap-btn {
+  width: auto !important;
+  padding: 10px 12px !important;
+  margin-bottom: 15px !important;
+  background-color: #003580 !important;
+  color: white !important;
+}
+
+.swap-btn:hover {
+  background-color: #004ba0 !important;
 }
 
 /* Buttons */
@@ -192,5 +210,14 @@ button:hover {
   button, .request-btn {
     padding: 10px;
     font-size: 15px;
+  }
+  
+  .country-selection {
+    flex-direction: column;
+  }
+  
+  .swap-btn {
+    width: 100% !important;
+    margin: 0 0 15px 0 !important;
   }
 }
