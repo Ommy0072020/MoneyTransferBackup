@@ -1,3 +1,73 @@
+// Language translations
+const translations = {
+  en: {
+    loginTitle: "Login",
+    roleLabel: "Select Role",
+    passwordLabel: "Password",
+    loginBtn: "Login",
+    usernameTitle: "Enter Username",
+    continueBtn: "Continue",
+    calculatorTitle: "Money Transfer Calculator",
+    logoutBtn: "Logout",
+    fromCountryLabel: "From Country",
+    toCountryLabel: "To Country",
+    amountLabel: "Amount",
+    calculateBtn: "Calculate Transfer",
+    requestTitle: "Need to make a transfer?",
+    requestBtn: "Request Transfer",
+    viewRequestsTitle: "View Submitted Requests",
+    viewRequestsBtn: "View Requests",
+    invalidPassword: "Invalid password. Please try again.",
+    enterUsername: "Please enter a username.",
+    validAmount: "Please enter a valid positive amount.",
+    recipientReceives: "Recipient receives:"
+  },
+  fr: {
+    loginTitle: "Connexion",
+    roleLabel: "Sélectionner un rôle",
+    passwordLabel: "Mot de passe",
+    loginBtn: "Se connecter",
+    usernameTitle: "Entrez votre nom d'utilisateur",
+    continueBtn: "Continuer",
+    calculatorTitle: "Calculateur de transfert d'argent",
+    logoutBtn: "Déconnexion",
+    fromCountryLabel: "Pays d'origine",
+    toCountryLabel: "Pays de destination",
+    amountLabel: "Montant",
+    calculateBtn: "Calculer le transfert",
+    requestTitle: "Besoin d'effectuer un transfert?",
+    requestBtn: "Demander un transfert",
+    viewRequestsTitle: "Voir les demandes soumises",
+    viewRequestsBtn: "Voir les demandes",
+    invalidPassword: "Mot de passe incorrect. Veuillez réessayer.",
+    enterUsername: "Veuillez entrer un nom d'utilisateur.",
+    validAmount: "Veuillez entrer un montant positif valide.",
+    recipientReceives: "Le bénéficiaire reçoit:"
+  },
+  sw: {
+    loginTitle: "Ingia",
+    roleLabel: "Chagua Jukumu",
+    passwordLabel: "Nenosiri",
+    loginBtn: "Ingia",
+    usernameTitle: "Weka Jina la Mtumiaji",
+    continueBtn: "Endelea",
+    calculatorTitle: "Kikokotoo cha Hamisha Pesa",
+    logoutBtn: "Ondoka",
+    fromCountryLabel: "Kutoka Nchi",
+    toCountryLabel: "Kwenda Nchi",
+    amountLabel: "Kiasi",
+    calculateBtn: "Kokotoa Uhamisho",
+    requestTitle: "Unahitaji kufanya uhamisho wa pesa?",
+    requestBtn: "Omba Uhamisho",
+    viewRequestsTitle: "Tazama Maombi Yaliyowasilishwa",
+    viewRequestsBtn: "Tazama Maombi",
+    invalidPassword: "Nenosiri batili. Tafadhali jaribu tena.",
+    enterUsername: "Tafadhali weka jina la mtumiaji.",
+    validAmount: "Tafadhali weka kiasi halali cha chanya.",
+    recipientReceives: "Mpokeaji atapokea:"
+  }
+};
+
 // Fixed exchange rates (two-way rates)
 const exchangeRates = {
   egypt: {
@@ -31,10 +101,12 @@ const currencySymbols = {
 
 let currentUser = '';
 let currentRole = '';
+let currentLanguage = 'en';
 
 // Initialize the application
 window.onload = function() {
-  document.getElementById('rolePanel').style.display = 'block';
+  document.getElementById('languagePanel').style.display = 'block';
+  document.getElementById('rolePanel').style.display = 'none';
   document.getElementById('usernamePanel').style.display = 'none';
   document.getElementById('calculatorPanel').style.display = 'none';
   
@@ -43,7 +115,64 @@ window.onload = function() {
   document.getElementById('toCountry').addEventListener('change', updateCountries);
 };
 
+function selectLanguage(lang) {
+  currentLanguage = lang;
+  translatePage();
+  showPanel('rolePanel');
+}
+
+function showLanguagePanel() {
+  document.getElementById('languagePanel').style.display = 'block';
+  document.getElementById('rolePanel').style.display = 'none';
+  document.getElementById('usernamePanel').style.display = 'none';
+  document.getElementById('calculatorPanel').style.display = 'none';
+}
+
+function translatePage() {
+  const trans = translations[currentLanguage];
+  document.getElementById('loginTitle').textContent = trans.loginTitle;
+  document.getElementById('roleLabel').textContent = trans.roleLabel;
+  document.getElementById('passwordLabel').textContent = trans.passwordLabel;
+  document.getElementById('loginBtn').textContent = trans.loginBtn;
+  document.getElementById('usernameTitle').textContent = trans.usernameTitle;
+  document.getElementById('continueBtn').textContent = trans.continueBtn;
+  document.getElementById('calculatorTitle').textContent = trans.calculatorTitle;
+  document.getElementById('logoutBtn').textContent = trans.logoutBtn;
+  document.getElementById('fromCountryLabel').textContent = trans.fromCountryLabel;
+  document.getElementById('toCountryLabel').textContent = trans.toCountryLabel;
+  document.getElementById('amountLabel').textContent = trans.amountLabel;
+  document.getElementById('calculateBtn').textContent = trans.calculateBtn;
+  document.getElementById('requestTitle').textContent = trans.requestTitle;
+  document.getElementById('requestBtn').textContent = trans.requestBtn;
+  document.getElementById('viewRequestsTitle').textContent = trans.viewRequestsTitle;
+  document.getElementById('viewRequestsBtn').textContent = trans.viewRequestsBtn;
+  
+  // Update placeholders
+  const placeholderTexts = {
+    en: {
+      password: 'Enter password',
+      username: 'Enter username',
+      amount: 'Enter amount'
+    },
+    fr: {
+      password: 'Entrez le mot de passe',
+      username: 'Entrez le nom d\'utilisateur',
+      amount: 'Entrez le montant'
+    },
+    sw: {
+      password: 'Weka nenosiri',
+      username: 'Weka jina la mtumiaji',
+      amount: 'Weka kiasi'
+    }
+  };
+  
+  document.getElementById('password').placeholder = placeholderTexts[currentLanguage].password;
+  document.getElementById('usernameInput').placeholder = placeholderTexts[currentLanguage].username;
+  document.getElementById('amount').placeholder = placeholderTexts[currentLanguage].amount;
+}
+
 function showPanel(panelId) {
+  document.getElementById('languagePanel').style.display = 'none';
   document.getElementById('rolePanel').style.display = 'none';
   document.getElementById('usernamePanel').style.display = 'none';
   document.getElementById('calculatorPanel').style.display = 'none';
@@ -62,7 +191,7 @@ function login() {
     showPanel('usernamePanel');
     loginError.textContent = "";
   } else {
-    loginError.textContent = "Invalid password. Please try again.";
+    loginError.textContent = translations[currentLanguage].invalidPassword;
   }
 }
 
@@ -71,7 +200,7 @@ function submitUsername() {
   const usernameError = document.getElementById("usernameError");
   
   if (username === "") {
-    usernameError.textContent = "Please enter a username.";
+    usernameError.textContent = translations[currentLanguage].enterUsername;
     return;
   }
   
@@ -130,7 +259,7 @@ function calculateTransfer() {
   const resultDiv = document.getElementById("result");
 
   if (isNaN(amount) || amount <= 0) {
-    resultDiv.textContent = "Please enter a valid positive amount.";
+    resultDiv.textContent = translations[currentLanguage].validAmount;
     resultDiv.style.color = "#d9534f";
     return;
   }
@@ -156,7 +285,7 @@ function calculateTransfer() {
     maximumFractionDigits: 2
   });
 
-  resultDiv.textContent = `Recipient receives: ${formattedReceived} ${targetCurrency}`;
+  resultDiv.textContent = `${translations[currentLanguage].recipientReceives} ${formattedReceived} ${targetCurrency}`;
   resultDiv.style.color = "#003580";
 }
 
