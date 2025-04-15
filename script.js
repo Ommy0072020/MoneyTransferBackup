@@ -22,7 +22,6 @@ const translations = {
     validAmount: "Please enter a valid positive amount.",
     recipientReceives: "Recipient receives:",
     PasswordIndicator: "Write KMC@2025 as Password",
-     </div>
   },
   fr: {
     loginTitle: "Connexion",
@@ -150,6 +149,7 @@ function translatePage() {
   document.getElementById('requestBtn').textContent = trans.requestBtn;
   document.getElementById('viewRequestsTitle').textContent = trans.viewRequestsTitle;
   document.getElementById('viewRequestsBtn').textContent = trans.viewRequestsBtn;
+
   
   // Update placeholders
   const placeholderTexts = {
@@ -181,6 +181,7 @@ function showPanel(panelId) {
   document.getElementById('usernamePanel').style.display = 'none';
   document.getElementById('calculatorPanel').style.display = 'none';
   document.getElementById(panelId).style.display = 'block';
+    document.getElementById('PasswordIndicator').textContent =.display;
 }
 
 function login() {
