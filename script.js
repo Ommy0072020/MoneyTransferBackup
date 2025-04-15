@@ -20,7 +20,9 @@ const translations = {
     invalidPassword: "Invalid password. Please try again.",
     enterUsername: "Please enter a username.",
     validAmount: "Please enter a valid positive amount.",
-    recipientReceives: "Recipient receives:"
+    recipientReceives: "Recipient receives:",
+    PasswordIndicator: "Write KMC@2025 as Password",
+     </div>
   },
   fr: {
     loginTitle: "Connexion",
@@ -42,7 +44,8 @@ const translations = {
     invalidPassword: "Mot de passe incorrect. Veuillez réessayer.",
     enterUsername: "Veuillez entrer un nom d'utilisateur.",
     validAmount: "Veuillez entrer un montant positif valide.",
-    recipientReceives: "Le bénéficiaire reçoit:"
+    recipientReceives: "Le bénéficiaire reçoit:",
+    PasswordIndicator:"Ecrivez KMC@2025 comme mot de passe",
   },
   sw: {
     loginTitle: "Ingia",
@@ -64,7 +67,8 @@ const translations = {
     invalidPassword: "Nenosiri batili. Tafadhali jaribu tena.",
     enterUsername: "Tafadhali weka jina la mtumiaji.",
     validAmount: "Tafadhali weka kiasi halali cha chanya.",
-    recipientReceives: "Mpokeaji atapokea:"
+    recipientReceives: "Mpokeaji atapokea:",
+    PasswordIndicator:"Andika KMC@2025 kama nenosiri"
   }
 };
 
