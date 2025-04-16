@@ -71,16 +71,16 @@ const translations = {
 // Fixed exchange rates (two-way rates)
 const exchangeRates = {
   egypt: {
-    burundi: 133.5,  // EGP to BIF
-    rwanda: 25.5,    // EGP to RWF
+    burundi: 137.04,  // EGP to BIF
+    rwanda: 25.93,    // EGP to RWF
     kenya: 2.3,      // EGP to KES
     tanzania: 48,    // EGP to TZS
     ouganda: 66.60,  // EGP to UGX
     drc: 51.85,      // EGP to CDF
     canada: 0.0116   // EGP to CAD
   },
-  burundi: { egypt: 0.0075 },  // BIF to EGP
-  rwanda: { egypt: 0.0392 },   // RWF to EGP
+  burundi: { egypt: 0.00654 },  // BIF to EGP
+  rwanda: { egypt: 0.03290 },   // RWF to EGP
   kenya: { egypt: 0.4348 },    // KES to EGP
   tanzania: { egypt: 0.0208 }, // TZS to EGP
   ouganda: { egypt: 0.0150 },  // UGX to EGP
