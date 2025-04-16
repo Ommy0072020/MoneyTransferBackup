@@ -27,7 +27,7 @@ const AppConfig = {
             canada: 0.0116,     // EGP to CAD
             usa: 0.032          // EGP to USD
         },
-        burundi: { egypt: 0.0073 },
+        burundi: { egypt: 0.006538 },
         rwanda: { egypt: 0.0386 },
         kenya: { egypt: 0.4348 },
         tanzania: { egypt: 0.0208 },
