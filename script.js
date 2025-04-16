@@ -21,7 +21,6 @@ const translations = {
     enterUsername: "Please enter a username.",
     validAmount: "Please enter a valid positive amount.",
     recipientReceives: "Recipient receives:",
-    PasswordIndicator: "Write KMC@2025 as Password",
   },
   fr: {
     loginTitle: "Connexion",
@@ -44,7 +43,6 @@ const translations = {
     enterUsername: "Veuillez entrer un nom d'utilisateur.",
     validAmount: "Veuillez entrer un montant positif valide.",
     recipientReceives: "Le bénéficiaire reçoit:",
-    PasswordIndicator:"Ecrivez KMC@2025 comme mot de passe",
   },
   sw: {
     loginTitle: "Ingia",
@@ -67,7 +65,6 @@ const translations = {
     enterUsername: "Tafadhali weka jina la mtumiaji.",
     validAmount: "Tafadhali weka kiasi halali cha chanya.",
     recipientReceives: "Mpokeaji atapokea:",
-    PasswordIndicator:"Andika KMC@2025 kama nenosiri"
   }
 };
 
