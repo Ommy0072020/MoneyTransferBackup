@@ -1,48 +1,47 @@
-// Default settings - all rates set to 0 (admin must configure)
-const defaultSettings = {
-  egpToBif: 0,
-  egpToTzs: 0,
-  egpToRwf: 0,
-  egpToUgx: 0,
-  egpToCdf: 0,
-  egpToKes: 0,
-  egpToCad: 0,
-  egpToUsd: 0,
-  egpToEur: 0,
-  egpToXof: 0,
-  feeBurundi: 0,
-  feeTanzania: 0
+
+// Fixed exchange rates (two-way rates)
+const exchangeRates = {
+  egypt: {
+    burundi: 133.5,  // EGP to BIF
+    rwanda: 25.5,    // EGP to RWF
+    kenya: 2.3,      // EGP to KES
+    tanzania: 48,    // EGP to TZS
+    ouganda: 66.60,  // EGP to UGX
+    drc: 51.85,      // EGP to CDF
+    canada: 0.0116   // EGP to CAD
+  },
+  burundi: { egypt: 0.0075 },  // BIF to EGP
+  rwanda: { egypt: 0.0392 },   // RWF to EGP
+  kenya: { egypt: 0.4348 },    // KES to EGP
+  tanzania: { egypt: 0.0208 }, // TZS to EGP
+  ouganda: { egypt: 0.0150 },  // UGX to EGP
+  drc: { egypt: 0.0193 },      // CDF to EGP
+  canada: { egypt: 86.21 }     // CAD to EGP
 };
 
 const currencySymbols = {
   egypt: 'EGP',
   burundi: 'BIF',
-  tanzania: 'TZS',
   rwanda: 'RWF',
+  kenya: 'KES',
+  tanzania: 'TZS',
   ouganda: 'UGX',
   drc: 'CDF',
-  kenya: 'KES',
-  canada: 'CAD',
-  usa: 'USD',
-  france: 'EUR',
-  belgium: 'EUR',
-  holland: 'EUR',
-  togo: 'XOF'
+  canada: 'CAD'
 };
 
 let currentUser = '';
-let transactionHistory = [];
+let currentRole = '';
 
 // Initialize the application
 window.onload = function() {
   document.getElementById('rolePanel').style.display = 'block';
   document.getElementById('usernamePanel').style.display = 'none';
   document.getElementById('calculatorPanel').style.display = 'none';
-  loadSettings();
   
-  if (!localStorage.getItem("transferSettings")) {
-    localStorage.setItem("transferSettings", JSON.stringify(defaultSettings));
-  }
+  // Set up event listeners for country changes
+  document.getElementById('fromCountry').addEventListener('change', updateCountries);
+  document.getElementById('toCountry').addEventListener('change', updateCountries);
 };
 
 function showPanel(panelId) {
@@ -50,10 +49,6 @@ function showPanel(panelId) {
   document.getElementById('usernamePanel').style.display = 'none';
   document.getElementById('calculatorPanel').style.display = 'none';
   document.getElementById(panelId).style.display = 'block';
-  
-  if (panelId === 'calculatorPanel' && localStorage.getItem("currentRole") === "customer") {
-    document.getElementById("settingsPanel").style.display = "none";
-  }
 }
 
 function login() {
@@ -63,6 +58,7 @@ function login() {
   
   if ((role === "admin" && password === "Kabura@2025") || 
       (role === "customer" && password === "KMC@2025")) {
+    currentRole = role;
     localStorage.setItem("currentRole", role);
     showPanel('usernamePanel');
     loginError.textContent = "";
@@ -83,90 +79,49 @@ function submitUsername() {
   currentUser = username;
   showPanel('calculatorPanel');
   
-  const settingsButton = document.getElementById("settingsButton");
-  const currentRole = localStorage.getItem("currentRole");
-  settingsButton.style.display = currentRole === "customer" ? "none" : "block";
-  
-  const savedHistory = localStorage.getItem(`transferHistory_${currentUser}`);
-  if (savedHistory) {
-    transactionHistory = JSON.parse(savedHistory);
-    updateHistoryDisplay();
+  // Show appropriate request button based on role
+  if (currentRole === "admin") {
+    document.getElementById("customerRequestForm").style.display = "none";
+    document.getElementById("adminRequestForm").style.display = "block";
+  } else {
+    document.getElementById("customerRequestForm").style.display = "block";
+    document.getElementById("adminRequestForm").style.display = "none";
   }
 }
 
 function logout() {
-  localStorage.setItem(`transferHistory_${currentUser}`, JSON.stringify(transactionHistory));
   currentUser = '';
+  currentRole = '';
   localStorage.removeItem("currentRole");
   document.getElementById("password").value = '';
   document.getElementById("usernameInput").value = '';
-  document.getElementById("settingsButton").style.display = "block";
   showPanel('rolePanel');
 }
 
-function toggleSettings() {
-  const panel = document.getElementById("settingsPanel");
-  panel.style.display = panel.style.display === "none" ? "block" : "none";
-  document.getElementById("settingsMessage").textContent = "";
-}
-
-function saveSettings() {
-  const settings = {
-    egpToBif: parseFloat(document.getElementById("egpToBif").value),
-    egpToTzs: parseFloat(document.getElementById("egpToTzs").value),
-    egpToRwf: parseFloat(document.getElementById("egpToRwf").value),
-    egpToUgx: parseFloat(document.getElementById("egpToUgx").value),
-    egpToCdf: parseFloat(document.getElementById("egpToCdf").value),
-    egpToKes: parseFloat(document.getElementById("egpToKes").value),
-    egpToCad: parseFloat(document.getElementById("egpToCad").value),
-    egpToUsd: parseFloat(document.getElementById("egpToUsd").value),
-    egpToEur: parseFloat(document.getElementById("egpToEur").value),
-    egpToXof: parseFloat(document.getElementById("egpToXof").value),
-    feeBurundi: parseFloat(document.getElementById("feeBurundi").value),
-    feeTanzania: parseFloat(document.getElementById("feeTanzania").value)
-  };
+function updateCountries() {
+  const fromCountry = document.getElementById("fromCountry").value;
+  const toCountry = document.getElementById("toCountry").value;
   
-  for (const key in settings) {
-    if (isNaN(settings[key])) {
-      document.getElementById("settingsMessage").textContent = "Please enter valid numbers for all fields.";
-      document.getElementById("settingsMessage").className = "error";
-      return;
-    }
+  // If from country is changed to non-Egypt, set to country to Egypt
+  if (fromCountry !== "egypt") {
+    document.getElementById("toCountry").value = "egypt";
   }
-  
-  localStorage.setItem("transferSettings", JSON.stringify(settings));
-  document.getElementById("settingsMessage").textContent = "Settings saved successfully!";
-  document.getElementById("settingsMessage").className = "success";
-  
-  setTimeout(() => {
-    document.getElementById("settingsPanel").style.display = "none";
-  }, 2000);
-}
-
-function resetSettings() {
-  if (confirm("Are you sure you want to reset to default settings?")) {
-    localStorage.removeItem("transferSettings");
-    loadSettings();
-    document.getElementById("settingsMessage").textContent = "Settings reset to defaults!";
-    document.getElementById("settingsMessage").className = "success";
+  // If to country is changed to non-Egypt, set from country to Egypt
+  else if (toCountry !== "egypt") {
+    document.getElementById("fromCountry").value = "egypt";
   }
 }
 
-function loadSettings() {
-  const saved = JSON.parse(localStorage.getItem("transferSettings")) || defaultSettings;
+function swapCountries() {
+  const fromCountry = document.getElementById("fromCountry").value;
+  const toCountry = document.getElementById("toCountry").value;
   
-  document.getElementById("egpToBif").value = saved.egpToBif || defaultSettings.egpToBif;
-  document.getElementById("egpToTzs").value = saved.egpToTzs || defaultSettings.egpToTzs;
-  document.getElementById("egpToRwf").value = saved.egpToRwf || defaultSettings.egpToRwf;
-  document.getElementById("egpToUgx").value = saved.egpToUgx || defaultSettings.egpToUgx;
-  document.getElementById("egpToCdf").value = saved.egpToCdf || defaultSettings.egpToCdf;
-  document.getElementById("egpToKes").value = saved.egpToKes || defaultSettings.egpToKes;
-  document.getElementById("egpToCad").value = saved.egpToCad || defaultSettings.egpToCad;
-  document.getElementById("egpToUsd").value = saved.egpToUsd || defaultSettings.egpToUsd;
-  document.getElementById("egpToEur").value = saved.egpToEur || defaultSettings.egpToEur;
-  document.getElementById("egpToXof").value = saved.egpToXof || defaultSettings.egpToXof;
-  document.getElementById("feeBurundi").value = saved.feeBurundi || defaultSettings.feeBurundi;
-  document.getElementById("feeTanzania").value = saved.feeTanzania || defaultSettings.feeTanzania;
+  // Only allow swapping if one of them is Egypt
+  if (fromCountry === "egypt" || toCountry === "egypt") {
+    document.getElementById("fromCountry").value = toCountry;
+    document.getElementById("toCountry").value = fromCountry;
+    updateCountries();
+  }
 }
 
 function calculateTransfer() {
@@ -181,111 +136,43 @@ function calculateTransfer() {
     return;
   }
 
-  const settings = JSON.parse(localStorage.getItem("transferSettings")) || defaultSettings;
+  let rate, sourceCurrency, targetCurrency;
   
-  try {
-    let received = 0;
-    let fee = 0;
-    
-    if (fromCountry === "egypt") {
-      const exchangeRate = settings[`egpTo${currencySymbols[toCountry]}`] || 0;
-      
-      if (exchangeRate <= 0) {
-        resultDiv.textContent = "Exchange rate not set. Please contact admin.";
-        resultDiv.style.color = "#d9534f";
-        return;
-      }
-      
-      received = amount * exchangeRate;
-      
-      if (toCountry === "burundi") {
-        fee = settings.feeBurundi || 0;
-        received -= fee;
-      } 
-      else if (toCountry === "tanzania") {
-        fee = settings.feeTanzania || 0;
-        received -= fee;
-      }
-    }
-    else if (fromCountry === toCountry) {
-      received = amount;
-    }
-    else {
-      resultDiv.textContent = "Currency conversion not yet implemented for this pair.";
-      resultDiv.style.color = "#d9534f";
-      return;
-    }
-
-    const formattedReceived = received.toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
-
-    resultDiv.textContent = `Recipient receives: ${formattedReceived} ${currencySymbols[toCountry]}`;
-    resultDiv.style.color = "#003580";
-
-    const transaction = {
-      date: new Date().toLocaleString(),
-      fromCountry: fromCountry.charAt(0).toUpperCase() + fromCountry.slice(1),
-      toCountry: toCountry.charAt(0).toUpperCase() + toCountry.slice(1),
-      amount: amount,
-      received: received,
-      fromCurrency: currencySymbols[fromCountry],
-      toCurrency: currencySymbols[toCountry]
-    };
-    
-    transactionHistory.unshift(transaction);
-    if (transactionHistory.length > 10) {
-      transactionHistory.pop();
-    }
-    
-    updateHistoryDisplay();
-    localStorage.setItem(`transferHistory_${currentUser}`, JSON.stringify(transactionHistory));
-    
-  } catch (error) {
-    resultDiv.textContent = "An error occurred during calculation. Please check your inputs.";
-    resultDiv.style.color = "#d9534f";
-    console.error("Calculation error:", error);
+  if (fromCountry === "egypt") {
+    // Transfer from Egypt to another country
+    rate = exchangeRates.egypt[toCountry];
+    sourceCurrency = currencySymbols.egypt;
+    targetCurrency = currencySymbols[toCountry];
+  } else {
+    // Transfer from another country to Egypt
+    rate = exchangeRates[fromCountry].egypt;
+    sourceCurrency = currencySymbols[fromCountry];
+    targetCurrency = currencySymbols.egypt;
   }
-}
 
-function updateHistoryDisplay() {
-  const historyList = document.getElementById("historyList");
-  historyList.innerHTML = '';
-  
-  if (transactionHistory.length === 0) {
-    historyList.innerHTML = '<div class="history-item">No transactions yet</div>';
-    return;
-  }
-  
-  transactionHistory.forEach(transaction => {
-    const formattedAmount = transaction.amount.toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
-    
-    const formattedReceived = transaction.received.toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
-    
-    const item = document.createElement('div');
-    item.className = 'history-item';
-    item.innerHTML = `
-      <strong>${transaction.date}</strong><br>
-      From: ${transaction.fromCountry} (${transaction.fromCurrency})<br>
-      To: ${transaction.toCountry} (${transaction.toCurrency})<br>
-      Sent: ${formattedAmount} ${transaction.fromCurrency}<br>
-      Received: ${formattedReceived} ${transaction.toCurrency}
-    `;
-    historyList.appendChild(item);
+  const received = amount * rate;
+
+  const formattedReceived = received.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
   });
+
+  resultDiv.textContent = `Recipient receives: ${formattedReceived} ${targetCurrency}`;
+  resultDiv.style.color = "#003580";
 }
 
-function clearHistory() {
-  if (confirm("Are you sure you want to clear all transaction history?")) {
-    transactionHistory = [];
-    updateHistoryDisplay();
-    localStorage.removeItem(`transferHistory_${currentUser}`);
-  }
+// Open Google Form in new tab (for customers)
+function openTransferForm() {
+  window.open(
+    'https://docs.google.com/forms/d/e/1FAIpQLSd5EONg0TWXuERMa4cUYBKk2oImEP0oxcLWt-887pO0Nw7kgA/viewform',
+    '_blank'
+  );
+}
+
+// View requests in new tab (for admin)
+function viewRequests() {
+  window.open(
+    'https://docs.google.com/spreadsheets/d/e/2PACX-1vR6YGDoO-g89zJhebQOk28ZAhH_S00YyEcHQTEZeh3eQXT97RToLZLFhI0L3b2PAiUn48c4OB9zsuzy/pubhtml?widget=true&headers=false',
+    '_blank'
+  );
 }
