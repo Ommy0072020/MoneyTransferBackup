@@ -1,95 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Money Transfer Calculator</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Money Transfer Calculator</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Panel 1: Role Selection -->
-  <div class="panel" id="rolePanel">
-    <img src="Logo.png" alt="Logo" class="logo">
-    <h2>Login</h2>
-    <label for="role">Select Role</label>
-    <select id="role">
-      <option value="customer">Customer</option>
-      <option value="admin">Admin</option>
-    </select>
-    <label for="password">Password</label>
-    <input type="password" id="password" placeholder="Enter password">
-    <button onclick="login()">Login</button>
-    <div id="loginError" class="error"></div>
-  </div>
+<!-- Panel 0: Language Selection -->
+<div class="panel" id="languagePanel">
+<img src="Logo.png" alt="Logo" class="logo">
+<h2>Select Language / Choisir la langue / Chagua lugha</h2>
+<button onclick="selectLanguage('en')">English</button>
+<button onclick="selectLanguage('fr')">Français</button>
+<button onclick="selectLanguage('sw')">Swahili</button>
+</div>
 
-  <!-- Panel 2: Username Entry -->
-  <div class="panel" id="usernamePanel" style="display:none">
-    <img src="Logo.png" alt="Logo" class="logo">
-    <h2>Enter Username</h2>
-    <input type="text" id="usernameInput" placeholder="Enter username">
-    <button onclick="submitUsername()">Continue</button>
-    <div id="usernameError" class="error"></div>
-  </div>
+<!-- Panel 1: Role Selection -->
+<div class="panel" id="rolePanel" style="display:none">
+<div class="language-toggle">
+<button class="lang-btn" onclick="showLanguagePanel()">EN/FR/SW</button>
+</div>
+<img src="Logo.png" alt="Logo" class="logo">
+<h2 id="loginTitle">Login</h2>
+<label for="role" id="roleLabel">Select Role</label>
+<select id="role">
+<option value="customer">Customer</option>
+<option value="admin">Admin</option>
+</select>
 
-  <!-- Panel 3: Calculator -->
-  <div class="panel" id="calculatorPanel" style="display:none">
-    <img src="Logo.png" alt="Logo" class="logo">
-    <div class="header">
-      <h2>Money Transfer Calculator</h2>
-      <button class="logout-btn" onclick="logout()">Logout</button>
-    </div>
+<label for="password" id="passwordLabel">Password</label>
+<input type="password" id="password" placeholder="Enter password">
+<button onclick="login()" id="loginBtn">Login</button>
+<div id="loginError" class="error"></div>
+</div>
 
-    <div class="country-selection">
-      <div>
-        <label for="fromCountry">From Country</label>
-        <select id="fromCountry">
-          <option value="egypt">Egypt (EGP)</option>
-          <option value="burundi">Burundi (BIF)</option>
-          <option value="rwanda">Rwanda (RWF)</option>
-          <option value="kenya">Kenya (KES)</option>
-          <option value="tanzania">Tanzania (TZS)</option>
-          <option value="ouganda">Uganda (UGX)</option>
-          <option value="drc">DR Congo (CDF)</option>
-          <option value="canada">Canada (CAD)</option>
-        </select>
-      </div>
-      
-      <button class="swap-btn" onclick="swapCountries()">⇄</button>
-      
-      <div>
-        <label for="toCountry">To Country</label>
-        <select id="toCountry">
-          <option value="burundi">Burundi (BIF)</option>
-          <option value="rwanda">Rwanda (RWF)</option>
-          <option value="kenya">Kenya (KES)</option>
-          <option value="tanzania">Tanzania (TZS)</option>
-          <option value="ouganda">Uganda (UGX)</option>
-          <option value="drc">DR Congo (CDF)</option>
-          <option value="canada">Canada (CAD)</option>
-          <option value="egypt" selected>Egypt (EGP)</option>
-        </select>
-      </div>
-    </div>
+<!-- Panel 2: Username Entry -->
+<div class="panel" id="usernamePanel" style="display:none">
+<div class="language-toggle">
+<button class="lang-btn" onclick="showLanguagePanel()">EN/FR/SW</button>
+</div>
+<img src="Logo.png" alt="Logo" class="logo">
+<h2 id="usernameTitle">Enter Username</h2>
+<input type="text" id="usernameInput" placeholder="Enter username">
+<button onclick="submitUsername()" id="continueBtn">Continue</button>
+<div id="usernameError" class="error"></div>
+</div>
 
-    <div class="currency-input">
-      <label for="amount">Amount</label>
-      <input type="number" step="0.01" id="amount" placeholder="Enter amount" class="with-symbol">
-    </div>
+<!-- Panel 3: Calculator -->
+<div class="panel" id="calculatorPanel" style="display:none">
+<div class="language-toggle">
+<button class="lang-btn" onclick="showLanguagePanel()">EN/FR/SW</button>
+</div>
+<img src="Logo.png" alt="Logo" class="logo">
+<div class="header">
+<h2 id="calculatorTitle">Money Transfer Calculator</h2>
+<button class="logout-btn" onclick="logout()" id="logoutBtn">Logout</button>
+</div>
 
-    <button onclick="calculateTransfer()">Calculate Transfer</button>
-    <div class="result" id="result"></div>
-    
-    <div class="request-form" id="customerRequestForm">
-      <h3>Need to make a transfer?</h3>
-      <button class="request-btn" onclick="openTransferForm()">Request Transfer</button>
-    </div>
+<div class="country-selection">
+<div>
+<label for="fromCountry" id="fromCountryLabel">From Country</label>
+<select id="fromCountry">
+<option value="egypt">Egypt (EGP)</option>
+<option value="burundi">Burundi (BIF)</option>
+<option value="rwanda">Rwanda (RWF)</option>
+<option value="kenya">Kenya (KES)</option>
+<option value="tanzania">Tanzania (TZS)</option>
+<option value="uganda">Uganda (UGX)</option>
+<option value="drc">DR Congo (CDF)</option>
+<option value="togo">Togo (XOF)</option>
+<option value="belgium">Belgium (EUR)</option>
+<option value="france">France (EUR)</option>
+<option value="netherlands">Netherlands (EUR)</option>
+<option value="canada">Canada (CAD)</option>
+<option value="usa">USA (USD)</option>
+</select>
+</div>
 
-    <div class="request-form" id="adminRequestForm" style="display:none">
-      <h3>View Submitted Requests</h3>
-      <button class="request-btn" onclick="viewRequests()">View Requests</button>
-    </div>
-  </div>
+<button class="swap-btn" onclick="swapCountries()">⇄</button>
 
-  <script src="script.js"></script>
+<div>
+<label for="toCountry" id="toCountryLabel">To Country</label>
+<select id="toCountry">
+<option value="burundi">Burundi (BIF)</option>
+<option value="rwanda">Rwanda (RWF)</option>
+<option value="kenya">Kenya (KES)</option>
+<option value="tanzania">Tanzania (TZS)</option>
+<option value="uganda">Uganda (UGX)</option>
+<option value="drc">DR Congo (CDF)</option>
+<option value="togo">Togo (XOF)</option>
+<option value="belgium">Belgium (EUR)</option>
+<option value="france">France (EUR)</option>
+<option value="netherlands">Netherlands (EUR)</option>
+<option value="canada">Canada (CAD)</option>
+<option value="usa">USA (USD)</option>
+<option value="egypt" selected>Egypt (EGP)</option>
+</select>
+</div>
+</div>
+
+<div class="currency-input">
+<label for="amount" id="amountLabel">Amount</label>
+<input type="number" step="0.01" id="amount" placeholder="Enter amount" class="with-symbol">
+</div>
+
+<button onclick="calculateTransfer()" id="calculateBtn">Calculate Transfer</button>
+<div class="result" id="result"></div>
+
+<div class="request-form" id="customerRequestForm">
+<h3 id="requestTitle">Need to make a transfer?</h3>
+<button class="request-btn" onclick="openTransferForm()" id="requestBtn">Request Transfer</button>
+</div>
+
+<div class="request-form" id="adminRequestForm" style="display:none">
+<h3 id="viewRequestsTitle">View Submitted Requests</h3>
+<button class="request-btn" onclick="viewRequests()" id="viewRequestsBtn">View Requests</button>
+</div>
+</div>
+
+<script src="script.js"></script>
 </body>
-</html>s
+</html>
