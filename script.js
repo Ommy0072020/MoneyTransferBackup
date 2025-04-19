@@ -16,29 +16,31 @@ const AppConfig = {
         egypt: {
             burundi: 137.04,    // EGP to BIF
             rwanda: 25.93,      // EGP to RWF
-            kenya: 2.3,         // EGP to KES
+            kenya: 2.24,         // EGP to KES
             tanzania: 48,       // EGP to TZS
             uganda: 66.60,      // EGP to UGX
             drc: 51.85,         // EGP to CDF
-            togo: 3.93,         // EGP to XOF
-            belgium: 0.043,     // EGP to EUR
-            france: 0.043,      // EGP to EUR
-            netherlands: 0.043, // EGP to EUR
-            canada: 0.0116,     // EGP to CAD
-            usa: 0.032          // EGP to USD
+            togo: 10.56,         // EGP to XOF
+            saudi: 0.0784,         // EGP to SAR
+            belgium: 0.01488,     // EGP to EUR
+            france: 0.01488,      // EGP to EUR
+            netherlands: 0.01488, // EGP to EUR
+            canada: 0.0241,     // EGP to CAD
+            usa: 0.01717          // EGP to USD
         },
         burundi: { egypt: 0.006538 },
-        rwanda: { egypt: 0.0386 },
-        kenya: { egypt: 0.4348 },
-        tanzania: { egypt: 0.0208 },
-        uganda: { egypt: 0.0150 },
-        drc: { egypt: 0.0193 },
-        togo: { egypt: 0.254 },
-        belgium: { egypt: 23.26 },
-        france: { egypt: 23.26 },
-        netherlands: { egypt: 23.26 },
-        canada: { egypt: 86.21 },
-        usa: { egypt: 31.25 }
+        rwanda: { egypt: 0.0329 },
+        kenya: { egypt: 0.3723 },
+        tanzania: { egypt: 0.01855 },
+        uganda: { egypt: 0.0136 },
+        drc: { egypt: 0.017 },
+        togo: { egypt: 0.085 },
+        saudi: { egypt: 16.36 },
+        belgium: { egypt: 51.00 },
+        france: { egypt: 51.00 },
+        netherlands: { egypt: 51.00 },
+        canada: { egypt: 31.70 },
+        usa: { egypt: 44.90 }
     },
     currencySymbols: {
         egypt: 'EGP',
@@ -49,6 +51,7 @@ const AppConfig = {
         uganda: 'UGX',
         drc: 'CDF',
         togo: 'XOF',
+        saudi: 'SAR',
         belgium: 'EUR',
         france: 'EUR',
         netherlands: 'EUR',
@@ -56,7 +59,7 @@ const AppConfig = {
         usa: 'USD'
     },
     credentials: {
-        admin: "Kabura@2025",
+        admin: "Kabura20@2025",
         customer: "KMC@2025"
     }
 };
