@@ -4,7 +4,7 @@
  * Features:
  * - Multi-language support (English, French, Swahili)
  * - Role-based authentication (Customer, Admin)
- * - Currency conversion calculator
+ * - Currency conversion calculator with country flags
  * - Responsive design
  */
 
@@ -57,6 +57,22 @@ const AppConfig = {
         netherlands: 'EUR',
         canada: 'CAD',
         usa: 'USD'
+    },
+    countryCodes: {
+        egypt: 'eg',
+        burundi: 'bi',
+        rwanda: 'rw',
+        kenya: 'ke',
+        tanzania: 'tz',
+        uganda: 'ug',
+        drc: 'cd',
+        togo: 'tg',
+        saudi: 'sa',
+        belgium: 'be',
+        france: 'fr',
+        netherlands: 'nl',
+        canada: 'ca',
+        usa: 'us'
     },
     credentials: {
         admin: "Kabura20@2025",
@@ -158,6 +174,8 @@ const AppState = {
     initialize: function() {
         this.setupEventListeners();
         this.showPanel('languagePanel');
+        this.updateFlag('from');
+        this.updateFlag('to');
     },
     
     setupEventListeners: function() {
@@ -210,11 +228,23 @@ const AppState = {
         }
     },
     
+    getFlagUrl: function(countryKey) {
+        const countryCode = AppConfig.countryCodes[countryKey];
+        if (!countryCode) return '';
+        return `https://flagcdn.com/w40/${countryCode}.png`;
+    },
+    
+    updateFlag: function(direction) {
+        const country = document.getElementById(`${direction}Country`).value;
+        const flagElement = document.getElementById(`${direction}Flag`);
+        const flagUrl = this.getFlagUrl(country);
+        flagElement.style.backgroundImage = flagUrl ? `url(${flagUrl})` : 'none';
+    },
+    
     calculateTransfer: function() {
         const amount = parseFloat(document.getElementById("amount").value);
         const fromCountry = document.getElementById("fromCountry").value;
         const toCountry = document.getElementById("toCountry").value;
-        const resultDiv = document.getElementById("result");
         
         if (isNaN(amount) || amount <= 0) {
             this.showResult(i18n[this.currentLanguage].validAmount, true);
@@ -237,19 +267,40 @@ const AppState = {
         }
         
         const received = amount * rate;
+        const formattedAmount = amount.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
         const formattedReceived = received.toLocaleString(undefined, {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         });
         
-        const message = `${i18n[this.currentLanguage].recipientReceives} ${formattedReceived} ${targetCurrency}`;
-        this.showResult(message, false);
+        // Update result display with flags
+        document.getElementById('resultFromFlag').style.backgroundImage = 
+            `url(${this.getFlagUrl(fromCountry)})`;
+        document.getElementById('resultToFlag').style.backgroundImage = 
+            `url(${this.getFlagUrl(toCountry)})`;
+        
+        document.getElementById('resultFromAmount').textContent = 
+            `${formattedAmount} ${AppConfig.currencySymbols[fromCountry]}`;
+        document.getElementById('resultToAmount').textContent = 
+            `${formattedReceived} ${targetCurrency}`;
+        document.getElementById('exchangeRate').textContent = 
+            `Exchange rate: 1 ${AppConfig.currencySymbols[fromCountry]} = ${rate.toFixed(4)} ${targetCurrency}`;
+        
+        document.getElementById('result').style.display = 'block';
     },
     
     showResult: function(message, isError) {
         const resultDiv = document.getElementById("result");
-        resultDiv.textContent = message;
-        resultDiv.style.color = isError ? 'var(--danger-color)' : 'var(--primary-color)';
+        resultDiv.style.display = isError ? 'block' : 'block';
+        if (isError) {
+            document.getElementById('resultFromAmount').textContent = message;
+            document.getElementById('resultToAmount').textContent = '';
+            document.getElementById('exchangeRate').textContent = '';
+            resultDiv.style.color = 'var(--danger-color)';
+        }
     },
     
     swapCountries: function() {
@@ -260,6 +311,8 @@ const AppState = {
             document.getElementById("fromCountry").value = toCountry;
             document.getElementById("toCountry").value = fromCountry;
             this.updateCountries();
+            this.updateFlag('from');
+            this.updateFlag('to');
         }
     }
 };
@@ -326,6 +379,10 @@ function calculateTransfer() {
 
 function swapCountries() {
     AppState.swapCountries();
+}
+
+function updateFlag(direction) {
+    AppState.updateFlag(direction);
 }
 
 function openTransferForm() {

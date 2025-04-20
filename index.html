@@ -99,22 +99,25 @@
         <div class="country-selection">
             <div class="form-group">
                 <label for="fromCountry" id="fromCountryLabel">From Country</label>
-                <select id="fromCountry" class="form-control">
-                    <option value="egypt">Egypt (EGP)</option>
-                    <option value="burundi">Burundi (BIF)</option>
-                    <option value="rwanda">Rwanda (RWF)</option>
-                    <option value="kenya">Kenya (KES)</option>
-                    <option value="tanzania">Tanzania (TZS)</option>
-                    <option value="uganda">Uganda (UGX)</option>
-                    <option value="drc">DR Congo (CDF)</option>
-                    <option value="togo">Togo (XOF)</option>
-                    <option value="saudi arabia">Saudi Arabia (SAR)</option>
-                    <option value="belgium">Belgium (EUR)</option>
-                    <option value="france">France (EUR)</option>
-                    <option value="netherlands">Netherlands (EUR)</option>
-                    <option value="canada">Canada (CAD)</option>
-                    <option value="usa">USA (USD)</option>
-                </select>
+                <div class="country-selector">
+                    <div class="flag" id="fromFlag"></div>
+                    <select id="fromCountry" class="form-control" onchange="updateFlag('from')">
+                        <option value="egypt">Egypt (EGP)</option>
+                        <option value="burundi">Burundi (BIF)</option>
+                        <option value="rwanda">Rwanda (RWF)</option>
+                        <option value="kenya">Kenya (KES)</option>
+                        <option value="tanzania">Tanzania (TZS)</option>
+                        <option value="uganda">Uganda (UGX)</option>
+                        <option value="drc">DR Congo (CDF)</option>
+                        <option value="togo">Togo (XOF)</option>
+                        <option value="saudi">Saudi Arabia (SAR)</option>
+                        <option value="belgium">Belgium (EUR)</option>
+                        <option value="france">France (EUR)</option>
+                        <option value="netherlands">Netherlands (EUR)</option>
+                        <option value="canada">Canada (CAD)</option>
+                        <option value="usa">USA (USD)</option>
+                    </select>
+                </div>
             </div>
 
             <button class="btn btn-icon btn-swap" onclick="swapCountries()">
@@ -123,22 +126,25 @@
 
             <div class="form-group">
                 <label for="toCountry" id="toCountryLabel">To Country</label>
-                <select id="toCountry" class="form-control">
-                    <option value="burundi">Burundi (BIF)</option>
-                    <option value="rwanda">Rwanda (RWF)</option>
-                    <option value="kenya">Kenya (KES)</option>
-                    <option value="tanzania">Tanzania (TZS)</option>
-                    <option value="uganda">Uganda (UGX)</option>
-                    <option value="drc">DR Congo (CDF)</option>
-                    <option value="togo">Togo (XOF)</option>
-                    <option value="saudi arabia">Saudi Arabia (SAR)</option>
-                    <option value="belgium">Belgium (EUR)</option>
-                    <option value="france">France (EUR)</option>
-                    <option value="netherlands">Netherlands (EUR)</option>
-                    <option value="canada">Canada (CAD)</option>
-                    <option value="usa">USA (USD)</option>
-                    <option value="egypt" selected>Egypt (EGP)</option>
-                </select>
+                <div class="country-selector">
+                    <div class="flag" id="toFlag"></div>
+                    <select id="toCountry" class="form-control" onchange="updateFlag('to')">
+                        <option value="burundi">Burundi (BIF)</option>
+                        <option value="rwanda">Rwanda (RWF)</option>
+                        <option value="kenya">Kenya (KES)</option>
+                        <option value="tanzania">Tanzania (TZS)</option>
+                        <option value="uganda">Uganda (UGX)</option>
+                        <option value="drc">DR Congo (CDF)</option>
+                        <option value="togo">Togo (XOF)</option>
+                        <option value="saudi">Saudi Arabia (SAR)</option>
+                        <option value="belgium">Belgium (EUR)</option>
+                        <option value="france">France (EUR)</option>
+                        <option value="netherlands">Netherlands (EUR)</option>
+                        <option value="canada">Canada (CAD)</option>
+                        <option value="usa">USA (USD)</option>
+                        <option value="egypt" selected>Egypt (EGP)</option>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -154,7 +160,20 @@
             <i class="fas fa-calculator"></i> Calculate Transfer
         </button>
         
-        <div class="result-box" id="result"></div>
+        <div class="result-box" id="result">
+            <div class="result-flags">
+                <div class="result-flag-container">
+                    <div class="flag-large" id="resultFromFlag"></div>
+                    <div id="resultFromAmount"></div>
+                </div>
+                <div class="conversion-arrow">↓</div>
+                <div class="result-flag-container">
+                    <div class="flag-large" id="resultToFlag"></div>
+                    <div id="resultToAmount"></div>
+                </div>
+            </div>
+            <div id="exchangeRate" class="rate-display"></div>
+        </div>
 
         <div class="action-section" id="customerRequestForm">
             <h3 class="action-title" id="requestTitle">Need to make a transfer?</h3>
