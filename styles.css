@@ -149,16 +149,19 @@ body {
 
 /* Logo Styles - Updated */
 .logo {
-  width: 200px; /* Increased size */
+  width: 240px; /* Increased size */
   height: auto;
-  margin: 0 auto 30px; /* Increased margin */
+  margin: 0 auto 40px; /* Increased margin */
   display: block;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.15));
   transition: transform 0.3s ease;
+   position: relative; /* For potential absolute positioning of children */
+  z-index: 10; /* Ensures logo stays above other elements */
 }
 
 .logo:hover {
-  transform: scale(1.05); /* Hover effect */
+  transform: scale(1.07); /* Slightly stronger hover effect */
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)); /* Enhanced shadow on hover */
 }
 
 /* 3D Buttons with Enhanced Effects */
@@ -561,7 +564,7 @@ body {
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .panel {
-      padding: 25px 20px;
+      padding: 40px 20px;
   }
   
   .option-buttons {
@@ -626,8 +629,8 @@ body {
   }
 
   .logo {
-    width: 160px; /* Smaller on phones */
-    margin-bottom: 20px;
+    width: 200px; /* Smaller on phones */
+    margin-bottom: 30px;
   }
   
   .welcome-content {
