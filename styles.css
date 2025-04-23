@@ -149,7 +149,7 @@ body {
 
 /* Logo Styles - Updated */
 .logo {
-  width: 250px;  /* Ideal width for balance with the text */
+  width: 400px;  /* Ideal width for balance with the text */
   height: auto;  /* Maintain aspect ratio */
   margin: 0 auto 25px; /* Spacing below logo */
   display: block;
@@ -160,7 +160,7 @@ body {
 }
 
 .logo:hover {
-  transform: scale(1.07); /* Slightly stronger hover effect */
+  transform: scale(2.07); /* Slightly stronger hover effect */
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)); /* Enhanced shadow on hover */
 }
 
