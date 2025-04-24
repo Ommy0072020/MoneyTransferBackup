@@ -10,7 +10,7 @@
 <body>
     <!-- Language Selection Panel -->
     <div class="panel active" id="languagePanel">
-        <img src="Logo.png" alt="Logo" class="logo" />
+       <img class="logo" src="logo.png" alt="Logo" data-dimension="200px x 100px">
         <div class="welcome-content">
             <h1 id="welcomeTitle">Welcome To KMC</h1>
             <h2 id="companyName">Kabura Multiservice Company</h2>
@@ -312,6 +312,79 @@
                 <button class="btn btn-primary" onclick="document.getElementById('successModal').style.display='none'; showPanel('calculator');">
                     <span id="okBtnText">OK</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard Panel -->
+    <div class="panel" id="adminPanel">
+        <div class="panel-header">
+            <button class="btn btn-small btn-outline" onclick="showCalculatorPanel()">
+                <i class="fas fa-arrow-left"></i> <span id="backBtnTextAdmin">Back</span>
+            </button>
+            <button class="btn btn-small btn-danger" onclick="adminLogout()">
+                <i class="fas fa-sign-out-alt"></i> <span id="logoutBtnText">Logout</span>
+            </button>
+        </div>
+        
+        <div class="admin-dashboard">
+            <h2 class="panel-title"><i class="fas fa-tachometer-alt"></i> <span id="adminDashboardTitle">Admin Dashboard</span></h2>
+            
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalRequests">0</div>
+                    <div class="stat-label"><i class="fas fa-paper-plane"></i> <span id="totalRequestsLabel">Total Requests</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="egyptOutRequests">0</div>
+                    <div class="stat-label"><i class="fas fa-arrow-up"></i> <span id="egyptOutLabel">Egypt to Outside</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="outEgyptRequests">0</div>
+                    <div class="stat-label"><i class="fas fa-arrow-down"></i> <span id="outEgyptLabel">Outside to Egypt</span></div>
+                </div>
+            </div>
+            
+            <div class="admin-controls">
+                <button class="btn btn-primary" onclick="refreshSubmissions()">
+                    <i class="fas fa-sync-alt"></i> <span id="refreshBtnText">Refresh</span>
+                </button>
+                <button class="btn btn-success" onclick="exportToCSV()">
+                    <i class="fas fa-file-export"></i> <span id="exportBtnText">Export to CSV</span>
+                </button>
+            </div>
+            
+            <div class="submissions-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><span id="nameHeader">Name</span></th>
+                            <th><span id="phoneHeader">Phone</span></th>
+                            <th><span id="amountHeader">Amount</span></th>
+                            <th><span id="directionHeader">Direction</span></th>
+                            <th><span id="dateHeader">Date</span></th>
+                            <th><span id="actionsHeader">Actions</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="submissions-list">
+                        <!-- Submissions will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Submission Modal -->
+    <div class="modal" id="viewSubmissionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-alt"></i> <span id="submissionDetailsTitle">Submission Details</span></h3>
+                <button class="btn btn-small btn-outline" onclick="document.getElementById('viewSubmissionModal').style.display='none'">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="submissionDetailsContent">
+                <!-- Details will be loaded here -->
             </div>
         </div>
     </div>
